@@ -12,29 +12,35 @@ public class Player {
         while (true) {
             System.out.println("Current round: "+gc.round());
             VecUnit units = gc.myUnits();
+
             for (int i = 0; i < units.size(); i++) {
                 Unit unit = units.get(i);
-//                if(gc.canBlueprint(unit.id(), UnitType.Rocket, directions[0]) && !builtRocket){
-//                    gc.blueprint(unit.id(), UnitType.Rocket, directions[0]);
-//                    builtRocket = true;
-//                } else if(gc.canBuild(unit.id(), UnitType.Rocket) && builtRocket){
-//                    gc.build(unit.id(), BLUEPRINT_ID);//need to find that
-//                }
-                if(unit.unitType()==UnitType.Worker){
-                    for(int j = 0; j < 8; j++){
-                        if(gc.canBlueprint(unit.id(), UnitType.Factory, directions[j])){
-                            gc.blueprint(unit.id(), UnitType.Factory, directions[j]);
-                            continue;
-                        }
-                        if(gc.canReplicate(unit.id(), directions[j])){
-                            gc.replicate(unit.id(), directions[j]);
-                            continue;
-                        }
-                        if (gc.isMoveReady(unit.id()) && gc.canMove(unit.id(), directions[j])) {
-                            gc.moveRobot(unit.id(), directions[j]);
-                        }
+                VecUnit nearbyRockets = senseNearbyUnitsByType(unit.location(), 1, UnitType.Rocket);
+                if(gc.canBlueprint(unit.id(), UnitType.Rocket, directions[0]) && !builtRocket){
+                    gc.blueprint(unit.id(), UnitType.Rocket, directions[0]);
+                    builtRocket = true;
+                }
+                for(int j = 0; j < nearbyRockets.size(); j++) {
+                    if (gc.canBuild(unit.id(), UnitType.Rocket) && builtRocket) {
+                        gc.build(unit.id(), nearbyRockets.get(j).id());
+                        System.out.println("BUILT ROCKET");
                     }
                 }
+//                if(unit.unitType()==UnitType.Worker){
+//                    for(int j = 0; j < 8; j++){
+//                        if(gc.canBlueprint(unit.id(), UnitType.Factory, directions[j])){
+//                            gc.blueprint(unit.id(), UnitType.Factory, directions[j]);
+//                            continue;
+//                        }
+//                        if(gc.canReplicate(unit.id(), directions[j])){
+//                            gc.replicate(unit.id(), directions[j]);
+//                            continue;
+//                        }
+//                        if (gc.isMoveReady(unit.id()) && gc.canMove(unit.id(), directions[j])) {
+//                            gc.moveRobot(unit.id(), directions[j]);
+//                        }
+//                    }
+//                }
                 units = gc.myUnits();
             }
             gc.nextTurn();
