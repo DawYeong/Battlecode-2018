@@ -16,7 +16,7 @@ public class Worker {
     }
 
     public static void init() {
-        job = "blueprint";
+        job = "replicate";
     }
 
     public static void run() {
@@ -39,6 +39,7 @@ public class Worker {
                     replicate();
                     break;
             }
+            move();
         } catch (Exception e) {
         }
     }
@@ -48,6 +49,7 @@ public class Worker {
             for (int i = 0; i < 8; i++) {
                 if (gc.isMoveReady(unit.id()) && gc.canMove(unit.id(), directions[i])) {
                     gc.moveRobot(unit.id(), directions[i]);
+                    break;
                 }
             }
         } catch (Exception e) {
@@ -80,21 +82,8 @@ public class Worker {
         try {
             if (gc.canBlueprint(unit.id(), UnitType.Rocket, directions[0])) {
                 gc.blueprint(unit.id(), UnitType.Rocket, directions[0]);
+                Player.rockets.add(new Rocket(gc.myUnits().get(gc.myUnits().size()-1)));
                 job = "build";
-                VecUnit nearbyRockets = gc.senseNearbyUnitsByType(unit.location().mapLocation(), 1, UnitType.Rocket);
-                boolean foundRocket = false;
-                for (int i = 0; i < nearbyRockets.size(); i++) {
-                    for (int j = 0; j < Player.rockets.size(); j++) {
-                        if (nearbyRockets.get(i) == Player.rockets.get(j).unit) {
-                            foundRocket = true;
-                            break;
-                        }
-                    }
-                    if (!foundRocket) {
-                        Player.rockets.add(new Rocket(nearbyRockets.get(i)));
-                        break;
-                    }
-                }
             }
         } catch (Exception e) {
 
@@ -108,8 +97,8 @@ public class Worker {
                     if (gc.canBuild(unit.id(), nearbyRockets.get(i).id())) {
                         gc.build(unit.id(), nearbyRockets.get(i).id());
                     }
-                    if (!gc.canBuild(unit.id(), nearbyRockets.get(i).id())) {
-                        job = "replicate";
+                    if (nearbyRockets.get(i).structureIsBuilt()==1) {
+                        job = "harvest";
                     }
                 }
             }
@@ -126,6 +115,8 @@ public class Worker {
             for (int i = 0; i < 8; i++) {
                 if (gc.canReplicate(unit.id(), directions[i])) {
                     gc.replicate(unit.id(), directions[i]);
+                    Player.workers.add(new Worker(gc.myUnits().get(gc.myUnits().size()-1)));
+                    job = "blueprint";
                 }
             }
         } catch (Exception e) {

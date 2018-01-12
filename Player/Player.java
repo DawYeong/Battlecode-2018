@@ -14,6 +14,7 @@ public class Player {
     public static ArrayList<Ranger> rangers = new ArrayList<>();
     public static ArrayList<Mage> mages = new ArrayList<>();
     public static ArrayList<Healer> healers = new ArrayList<>();
+    public static ArrayList<Knight> knights = new ArrayList<>();
 
 
     public static void main(String[] args) {
@@ -31,10 +32,20 @@ public class Player {
                     Unit unit = units.get(i);
                     switch (unit.unitType()) {
                         case Worker: //We don't need UnitType.Worker since it is an enum
-                            workers.get(i).run();
+                            for(int j = 0; j < workers.size(); j++){
+                                if(workers.get(j).unit.id()==unit.id()) {
+                                    workers.get(j).run();
+                                    break;
+                                }
+                            }
                             break;
                         case Rocket:
-                            rockets.get(i).run();
+                            for(int j = 0; j < rockets.size(); j++){
+                                if(rockets.get(j).unit.id()==unit.id()) {
+                                    rockets.get(j).run();
+                                    break;
+                                }
+                            }
                             break;
                     }
                     units = gc.myUnits();
