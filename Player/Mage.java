@@ -2,7 +2,7 @@ import bc.*;
 import java.util.*;
 import java.io.*;
 
-public class Mage extends Unit {
+public class Mage {
     public static Unit unit;
     public static GameController gc = Player.gc;
     public static Direction[] directions = Player.directions;

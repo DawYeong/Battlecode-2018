@@ -3,7 +3,7 @@ import bc.*;
 import java.util.*;
 import java.io.*;
 
-public class Worker extends Unit {
+public class Worker {
     public static Unit unit, project;   //project is for storing the Structure the worker is currently building
     public static GameController gc = Player.gc;
     public static Direction[] directions = Player.directions;
@@ -85,13 +85,13 @@ public class Worker extends Unit {
                 boolean foundRocket = false;
                 for (int i = 0; i < nearbyRockets.size(); i++) {
                     for (int j = 0; j < Player.rockets.size(); j++) {
-                        if (nearbyRockets.get(i) == Player.rockets.get(j)) {
+                        if (nearbyRockets.get(i) == Player.rockets.get(j).unit) {
                             foundRocket = true;
                             break;
                         }
                     }
                     if (!foundRocket) {
-                        Player.rockets.add((Rocket) nearbyRockets.get(i));
+                        Player.rockets.add(new Rocket(nearbyRockets.get(i)));
                         break;
                     }
                 }

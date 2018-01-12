@@ -2,7 +2,7 @@ import bc.*;
 import java.util.*;
 import java.io.*;
 
-public class Healer extends Unit {
+public class Healer {
     public static Unit unit;
     public static GameController gc = Player.gc;
     public static Direction[] directions = Player.directions;

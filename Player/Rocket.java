@@ -2,7 +2,7 @@ import bc.*;
 import java.util.*;
 import java.io.*;
 
-public class Rocket extends Unit {
+public class Rocket {
     public static Unit unit;
     public static GameController gc = Player.gc;
     public static Direction[] directions = Player.directions;
@@ -24,8 +24,8 @@ public class Rocket extends Unit {
             gc.launchRocket(unit.id(), new MapLocation(Planet.Mars, nX, nY));
         } else if(unitsInRocket.size()==0){
             for(int i = 0; i < Player.workers.size(); i++) {
-                if (gc.canLoad(unit.id(), Player.workers.get(i).id())){
-                    gc.load(unit.id(), Player.workers.get(i).id());
+                if (gc.canLoad(unit.id(), Player.workers.get(i).unit.id())){
+                    gc.load(unit.id(), Player.workers.get(i).unit.id());
                 }
             }
         }

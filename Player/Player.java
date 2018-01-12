@@ -8,12 +8,12 @@ public class Player {
     public static Team myTeam = gc.team();
     public static Direction[] directions = Direction.values();
     public static VecUnit units;
-    public static ArrayList<Rocket> rockets;
-    public static ArrayList<Factory> factories;
-    public static ArrayList<Worker> workers;
-    public static ArrayList<Ranger> rangers;
-    public static ArrayList<Mage> mages;
-    public static ArrayList<Healer> healers;
+    public static ArrayList<Rocket> rockets = new ArrayList<>();
+    public static ArrayList<Factory> factories = new ArrayList<>();
+    public static ArrayList<Worker> workers = new ArrayList<>();
+    public static ArrayList<Ranger> rangers = new ArrayList<>();
+    public static ArrayList<Mage> mages = new ArrayList<>();
+    public static ArrayList<Healer> healers = new ArrayList<>();
 
 
     public static void main(String[] args) {

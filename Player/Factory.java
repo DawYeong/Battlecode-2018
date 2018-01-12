@@ -2,7 +2,7 @@ import bc.*;
 import java.util.*;
 import java.io.*;
 
-public class Factory extends Unit {
+public class Factory {
     public static Unit unit;
     public static GameController gc = Player.gc;
     public static Direction[] directions = Player.directions;
