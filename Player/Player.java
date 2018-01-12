@@ -27,7 +27,7 @@ public class Player {
             try {
                 System.out.println("Current round: " + gc.round());
                 units = gc.myUnits();
-
+                System.out.println("\tWorkers: " + workers.size() + "\tRockets: " + rockets.size() + "\tTotal: " + units.size());
                 for (int i = 0; i < units.size(); i++) {
                     Unit unit = units.get(i);
                     switch (unit.unitType()) {
@@ -38,6 +38,7 @@ public class Player {
                                     break;
                                 }
                             }
+
                             break;
                         case Rocket:
                             for(int j = 0; j < rockets.size(); j++){
