@@ -1,0 +1,41 @@
+import bc.*;
+import java.util.*;
+import java.io.*;
+
+public class Healer {
+    public static Unit unit;
+    public static GameController gc = Player.gc;
+    public static Direction[] directions = Player.directions;
+    public static VecUnit nearbyteam;
+    Healer (Unit unit){
+        this.unit = unit;
+        init();
+    }
+
+    public void init(){
+
+    }
+
+    public void run(){
+        try { 
+            nearbyteam = gc.senseNearbyUnitsByTeam(unit.location().mapLocation(), 5, gc.team());
+            if(unit.abilityHeat() == 0) {
+                heal();
+            }
+        } catch(Exception e) {
+            
+        }
+
+    }
+    public void heal() {
+        try {
+            for(int i = 0; i<nearbyteam.size(); i++) {
+                if(gc.canHeal(unit.id(), nearbyteam.get(i).id())) {
+                    gc.heal(unit.id(), nearbyteam.get(i).id());
+                }
+            }
+        }catch (Exception e) {
+            
+        }
+    }
+}
