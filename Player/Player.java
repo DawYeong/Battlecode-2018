@@ -5,9 +5,11 @@ import java.io.*;
 
 public class Player {
     public static GameController gc = new GameController();
+    public static MapLocation ml = new MapLocation(Planet.Earth, 10, 20);
     public static Team myTeam = gc.team();
     public static Direction[] directions = Direction.values();
     public static VecUnit units;
+    public static int maxWorkerAmount = 10;
     public static ArrayList<Rocket> rockets = new ArrayList<>();
     public static ArrayList<Factory> factories = new ArrayList<>();
     public static ArrayList<Worker> workers = new ArrayList<>();
@@ -25,9 +27,9 @@ public class Player {
         }
         while (true) {
             try {
-                System.out.println("Current round: " + gc.round());
                 units = gc.myUnits();
-                System.out.println("\tWorkers: " + workers.size() + "\tRockets: " + rockets.size() + "\tTotal: " + units.size());
+                System.out.println("Current round: " + gc.round() + "\tWorkers: " + workers.size() + "\tRockets: " + rockets.size() + "\tTotal: " + units.size());
+
                 for (int i = 0; i < units.size(); i++) {
                     Unit unit = units.get(i);
                     switch (unit.unitType()) {

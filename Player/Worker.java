@@ -4,7 +4,7 @@ import java.util.*;
 import java.io.*;
 
 public class Worker {
-    public static Unit unit;
+    public Unit unit;
     public static UnitType project; //project is for storing the Structure the worker is going to blueprint next
     public static GameController gc = Player.gc;
     public static Direction[] directions = Player.directions;
@@ -16,19 +16,19 @@ public class Worker {
         init();
     }
 
-    public static void init() {
+    public void init() {
     }
 
-    public static void run() {
+    public void run() {
         try {
             nearbyRockets = gc.senseNearbyUnitsByType(unit.location().mapLocation(), 1, UnitType.Rocket);
-            if(unit.abilityHeat()==0){//Check if can use ability
+            if (unit.abilityHeat() == 0 && Player.workers.size()<Player.maxWorkerAmount) {//Check if can use ability
                 job = "replicate";
-            } else if(hasBuildable(nearbyRockets)){
+            } else if (hasBuildable(nearbyRockets)) {
                 job = "build";
-            } else if(hasRepairable(nearbyRockets)){
+            } else if (hasRepairable(nearbyRockets)) {
                 job = "repair";
-            } else if(gc.karbonite()>=bc.bcUnitTypeBlueprintCost(project)/* && shouldBuild==true*/){
+            } else if (gc.karbonite() >= bc.bcUnitTypeBlueprintCost(project)/* && shouldBuild==true*/) {
                 job = "blueprint";
             } else {
                 job = "harvest";
@@ -62,7 +62,7 @@ public class Worker {
         }
     }
 
-    public static void move() {
+    public void move() {
         try {
             for (int i = 0; i < 8; i++) {
                 if (gc.canMove(unit.id(), directions[i])) {
@@ -74,7 +74,7 @@ public class Worker {
         }
     }
 
-    public static void harvest() {
+    public void harvest() {
         try {
             int[] karboniteAmounts = new int[9];
             int indexOfMaxAmount = 0, maxAmount = 0;
@@ -96,12 +96,12 @@ public class Worker {
         }
     }
 
-    public static void blueprint() {
+    public void blueprint() {
         try {
             for (int i = 0; i < 8; i++) {
-                if (gc.canBlueprint(unit.id(), UnitType.Rocket, directions[i]) && gc.karbonite()>=bc.bcUnitTypeBlueprintCost(UnitType.Rocket)) {
+                if (gc.canBlueprint(unit.id(), UnitType.Rocket, directions[i]) && gc.karbonite() >= bc.bcUnitTypeBlueprintCost(UnitType.Rocket)) {
                     gc.blueprint(unit.id(), UnitType.Rocket, directions[i]);
-                    Player.rockets.add(new Rocket(gc.myUnits().get(gc.myUnits().size() - 1)));
+                    Player.rockets.add(new Rocket(gc.senseUnitAtLocation(unit.location().mapLocation().add(directions[i]))));
                     return;
                 }
             }
@@ -110,7 +110,7 @@ public class Worker {
         }
     }
 
-    public static void build() {
+    public void build() {
         try {
             for (int i = 0; i < nearbyRockets.size(); i++) {
                 if (nearbyRockets.get(i).structureIsBuilt() == 0) {//0 false, 1 true?
@@ -124,9 +124,9 @@ public class Worker {
         }
     }
 
-    public static void repair() {
-        try{
-            for(int i = 0; i < nearbyRockets.size(); i++){
+    public void repair() {
+        try {
+            for (int i = 0; i < nearbyRockets.size(); i++) {
                 if (gc.canRepair(unit.id(), nearbyRockets.get(i).id())) {
                     gc.repair(unit.id(), nearbyRockets.get(i).id());
                     return;
@@ -137,12 +137,12 @@ public class Worker {
         }
     }
 
-    public static void replicate() {
+    public void replicate() {
         try {
             for (int i = 0; i < 8; i++) {
                 if (gc.canReplicate(unit.id(), directions[i])) {
                     gc.replicate(unit.id(), directions[i]);
-                    Player.workers.add(new Worker(gc.myUnits().get(gc.myUnits().size() - 1)));
+                    Player.workers.add(new Worker(gc.senseUnitAtLocation(unit.location().mapLocation().add(directions[i]))));
                     return;
                 }
             }
@@ -150,27 +150,27 @@ public class Worker {
         }
     }
 
-    public static boolean hasBuildable(VecUnit structures){
-        try{
-            for(int i = 0; i < structures.size(); i++){
-                if(structures.get(i).structureIsBuilt()==0){
+    public boolean hasBuildable(VecUnit structures) {
+        try {
+            for (int i = 0; i < structures.size(); i++) {
+                if (structures.get(i).structureIsBuilt() == 0) {
                     return true;
                 }
             }
-        } catch (Exception e){
+        } catch (Exception e) {
 
         }
         return false;
     }
 
-    public static boolean hasRepairable(VecUnit structures){
-        try{
-            for(int i = 0; i < structures.size(); i++){
-                if(structures.get(i).health()<structures.get(i).maxHealth()){
+    public boolean hasRepairable(VecUnit structures) {
+        try {
+            for (int i = 0; i < structures.size(); i++) {
+                if (structures.get(i).health() < structures.get(i).maxHealth()) {
                     return true;
                 }
             }
-        } catch (Exception e){
+        } catch (Exception e) {
 
         }
         return false;
