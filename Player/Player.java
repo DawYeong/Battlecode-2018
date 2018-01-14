@@ -28,6 +28,8 @@ public class Player {
     public static MapLocation ml = new MapLocation(Planet.Earth, 10, 20);
     public static Team myTeam = gc.team();
     public static Direction[] directions = Direction.values();
+    public static Cell GridEarth[][];
+    public static Cell GridMars[][];
     public static VecUnit units;
     public static int maxWorkerAmount = 10;
     public static ArrayList<Rocket> rockets = new ArrayList<>();
@@ -40,9 +42,14 @@ public class Player {
     public static Unit unit;
     public static Veci32 communications;//TEAM ARRAY to comm. between Earth and Mars
     public static long latestArrayIndex = 0;
+    public static PlanetMap EarthMap = gc.startingMap(Planet.Earth);
+    public static PlanetMap MarsMap = gc.startingMap(Planet.Mars);
 
     public static void main(String[] args) {
         gc.queueResearch(UnitType.Rocket);
+        GridEarth = new Cell[(int) EarthMap.getHeight()][(int) EarthMap.getWidth()];
+        GridMars = new Cell[(int) MarsMap.getHeight()][(int) MarsMap.getWidth()];
+        constructGrid();
         for (int i = 0; i < gc.myUnits().size(); i++) {
             workers.add(new Worker(gc.myUnits().get(i)));
         }
@@ -70,6 +77,7 @@ public class Player {
                                         break;
                                     }
                                 }
+                                GridEarth[unit.location().mapLocation().getY()][unit.location().mapLocation().getX()].setValue("RO");
                             } else {
                                 for (int j = 0; j < rockets.size(); j++) {
                                     if (rockets.get(j).unit.id() == unit.id()) {
@@ -77,6 +85,7 @@ public class Player {
                                         break;
                                     }
                                 }
+                                GridMars[unit.location().mapLocation().getY()][unit.location().mapLocation().getX()].setValue("RO");
                             }
                             break;
                         case Factory:
@@ -87,6 +96,7 @@ public class Player {
                                         break;
                                     }
                                 }
+                                GridEarth[unit.location().mapLocation().getY()][unit.location().mapLocation().getX()].setValue("F");
                             }
                             break;
                         case Worker: //We don't need UnitType.Worker since it is an enum
@@ -97,6 +107,7 @@ public class Player {
                                         break;
                                     }
                                 }
+                                GridEarth[unit.location().mapLocation().getY()][unit.location().mapLocation().getX()].setValue("W");
                             } else {
                                 for (int j = 0; j < workers.size(); j++) {
                                     if (workers.get(j).unit.id() == unit.id()) {
@@ -104,6 +115,7 @@ public class Player {
                                         break;
                                     }
                                 }
+                                GridMars[unit.location().mapLocation().getY()][unit.location().mapLocation().getX()].setValue("W");
                             }
                             break;
                         case Ranger: //We don't need UnitType.Worker since it is an enum
@@ -114,6 +126,7 @@ public class Player {
                                         break;
                                     }
                                 }
+                                GridEarth[unit.location().mapLocation().getY()][unit.location().mapLocation().getX()].setValue("RA");
                             } else {
                                 for (int j = 0; j < rangers.size(); j++) {
                                     if (rangers.get(j).unit.id() == unit.id()) {
@@ -121,6 +134,7 @@ public class Player {
                                         break;
                                     }
                                 }
+                                GridMars[unit.location().mapLocation().getY()][unit.location().mapLocation().getX()].setValue("RA");
                             }
                             break;
                         case Mage: //We don't need UnitType.Worker since it is an enum
@@ -131,6 +145,7 @@ public class Player {
                                         break;
                                     }
                                 }
+                                GridEarth[unit.location().mapLocation().getY()][unit.location().mapLocation().getX()].setValue("M");
                             } else {
                                 for (int j = 0; j < mages.size(); j++) {
                                     if (mages.get(j).unit.id() == unit.id()) {
@@ -138,6 +153,7 @@ public class Player {
                                         break;
                                     }
                                 }
+                                GridMars[unit.location().mapLocation().getY()][unit.location().mapLocation().getX()].setValue("M");
                             }
                             break;
                         case Healer: //We don't need UnitType.Worker since it is an enum
@@ -148,6 +164,7 @@ public class Player {
                                         break;
                                     }
                                 }
+                                GridEarth[unit.location().mapLocation().getY()][unit.location().mapLocation().getX()].setValue("H");
                             } else {
                                 for (int j = 0; j < healers.size(); j++) {
                                     if (healers.get(j).unit.id() == unit.id()) {
@@ -155,6 +172,7 @@ public class Player {
                                         break;
                                     }
                                 }
+                                GridMars[unit.location().mapLocation().getY()][unit.location().mapLocation().getX()].setValue("H");
                             }
                             break;
                         case Knight: //We don't need UnitType.Worker since it is an enum
@@ -165,6 +183,7 @@ public class Player {
                                         break;
                                     }
                                 }
+                                GridEarth[unit.location().mapLocation().getY()][unit.location().mapLocation().getX()].setValue("K");
                             } else {
                                 for (int j = 0; j < knights.size(); j++) {
                                     if (knights.get(j).unit.id() == unit.id()) {
@@ -172,6 +191,7 @@ public class Player {
                                         break;
                                     }
                                 }
+                                GridMars[unit.location().mapLocation().getY()][unit.location().mapLocation().getX()].setValue("K");
                             }
                             break;
                     }
@@ -440,6 +460,43 @@ public class Player {
             }
         }
         return null;//Shouldn't ever reach here
+    }
+
+    public static void constructGrid(){
+        try {
+            MapLocation tempLocationEarth = new MapLocation(Planet.Earth, 0, 0);
+            MapLocation tempLocationMars = new MapLocation(Planet.Earth, 0, 0);
+            for (int y = 0; y < GridEarth[0].length; y++) {
+                for (int x = 0; x < GridEarth[1].length; x++) {
+                    tempLocationEarth.setX(x);
+                    tempLocationEarth.setY(y);
+                    Cell c;
+                    if (EarthMap.isPassableTerrainAt(tempLocationEarth) != 0) {
+                        c = new Cell(x, y, true, " ");
+                        GridEarth[y][x] = c;
+                    } else {
+                        c = new Cell(x, y, false, "--");
+                        GridEarth[y][x] = c;
+                    }
+                }
+            }
+            for (int y = 0; y < GridMars[0].length; y++) {
+                for (int x = 0; x < GridMars[1].length; x++) {
+                    tempLocationMars.setX(x);
+                    tempLocationMars.setY(y);
+                    Cell c;
+                    if (MarsMap.isPassableTerrainAt(tempLocationMars) != 0) {
+                        c = new Cell(x, y, true, " ");
+                        GridMars[y][x] = c;
+                    } else {
+                        c = new Cell(x, y, false, "--");
+                        GridMars[y][x] = c;
+                    }
+                }
+            }
+        } catch (Exception e){
+
+        }
     }
 }
 

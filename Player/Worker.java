@@ -11,6 +11,8 @@ public class Worker {
     public String job; //harvest, blueprint, build, repair, replicate
     public VecUnit nearbyStructures;
     public boolean loadReady = false, shouldBlueprint = true;
+    public Finder finder;
+    public int projectId;
 
     Worker(Unit unit) {
         this.unit = unit;
@@ -104,16 +106,32 @@ public class Worker {
 
     public void move() {
         try {
-//            for (int i = 0; i < 8; i++) {
-//                if (gc.canMove(unit.id(), directions[i])) {
-//                    gc.moveRobot(unit.id(), directions[i]);
-//                    return;
+            if(gc.planet()==Planet.Earth) {
+                finder = new Finder(
+                        Player.GridEarth[unit.location().mapLocation().getY()][unit.location().mapLocation().getX()],
+                        Player.GridEarth[gc.unit(projectId).location().mapLocation().getY()][gc.unit(projectId).location().mapLocation().getX()],
+                        Player.GridEarth);
+                finder.findPath();
+                if(finder.bPathFound){
+                    finder.reconstructPath();
+                    if(gc.canMove(unit.id(), unit.location().mapLocation().directionTo(finder.nextMove()))) {
+                        gc.moveRobot(unit.id(), unit.location().mapLocation().directionTo(finder.nextMove()));
+                    } else if(gc.unit(projectId).unitType()==UnitType.Rocket){
+                        loadReady = true;
+                    }
+                }
+            } else {
+//                finder = new Finder(
+//                        Player.GridMars[unit.location().mapLocation().getY()][unit.location().mapLocation().getX()],
+//                        Player.GridMars[gc.unit(projectId).location().mapLocation().getY()][gc.unit(projectId).location().mapLocation().getX()],
+//                        Player.GridMars);
+//                finder.findPath();
+//                if(finder.bPathFound){
+//                    finder.reconstructPath();
+//                    if(gc.isMoveReady(unit.id()) && gc.canMove(unit.id(), unit.location().mapLocation().directionTo(finder.nextMove()))) {
+//                        gc.moveRobot(unit.id(), unit.location().mapLocation().directionTo(finder.nextMove()));
+//                    }
 //                }
-//            }
-            Random rand = new Random();
-            int nRandom = rand.nextInt(8);
-            if(gc.canMove(unit.id(), directions[nRandom])){
-                gc.moveRobot(unit.id(), directions[nRandom]);
             }
         } catch (Exception e) {
         }
@@ -166,16 +184,39 @@ public class Worker {
 
     public void build() {
         try {
-            for (int i = 0; i < nearbyStructures.size(); i++) {
-                if (nearbyStructures.get(i).structureIsBuilt() == 0) {//0 false, 1 true?
-                    if (gc.canBuild(unit.id(), nearbyStructures.get(i).id())) {
-                        gc.build(unit.id(), nearbyStructures.get(i).id());
+            if(projectId==-1) {
+                for (int i = 0; i < Player.rockets.size(); i++) {
+                    if (Player.rockets.get(i).unit.structureIsBuilt() == 1) {
+                        projectId = Player.rockets.get(i).unit.id();
                         return;
                     }
-                } else {
-                    loadReady = true;
                 }
             }
+            if(projectId==-1) {
+                for (int i = 0; i < Player.factories.size(); i++) {
+                    if (Player.factories.get(i).unit.structureIsBuilt() == 1) {
+                        projectId = Player.factories.get(i).unit.id();
+                    }
+                }
+            }
+            if(projectId!=-1) {
+                if (gc.canBuild(unit.id(), projectId)) {
+                    gc.build(unit.id(), projectId);
+                }
+                if(gc.unit(projectId).structureIsBuilt()==1){
+                    projectId=-1;
+                }
+            }
+//            for (int i = 0; i < nearbyStructures.size(); i++) {
+//                if (nearbyStructures.get(i).structureIsBuilt() == 0) {//0 false, 1 true?
+//                    if (gc.canBuild(unit.id(), nearbyStructures.get(i).id())) {
+//                        gc.build(unit.id(), nearbyStructures.get(i).id());
+//                        return;
+//                    }
+//                } else {
+//                    loadReady = true;
+//                }
+//            }
         } catch (Exception e) {
         }
     }
