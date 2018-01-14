@@ -27,7 +27,26 @@ public class Rocket {
             int nX = rand.nextInt(10) + 5;
             int nY = rand.nextInt(10) + 5;
             if(gc.canLaunchRocket(unit.id(), new MapLocation(Planet.Mars, nX, nY))) {
-                gc.writeTeamArray(Player.latestArrayIndex++, unit.id());
+                gc.writeTeamArray(0, gc.getTeamArray(Planet.Earth).get(0)+1);
+                for(int i = 0; i < unitsInStructure.size(); i++){
+                    switch (gc.unit(unitsInStructure.get(i)).unitType()){
+                        case Worker:
+                            gc.writeTeamArray(1, gc.getTeamArray(Planet.Earth).get(1)+1);
+                            break;
+                        case Ranger:
+                            gc.writeTeamArray(2, gc.getTeamArray(Planet.Earth).get(2)+1);
+                            break;
+                        case Mage:
+                            gc.writeTeamArray(3, gc.getTeamArray(Planet.Earth).get(3)+1);
+                            break;
+                        case Healer:
+                            gc.writeTeamArray(4, gc.getTeamArray(Planet.Earth).get(4)+1);
+                            break;
+                        case Knight:
+                            gc.writeTeamArray(5, gc.getTeamArray(Planet.Earth).get(5)+1);
+                            break;
+                    }
+                }
                 gc.launchRocket(unit.id(), new MapLocation(Planet.Mars, nX, nY));
             }
         } else if (unitsInStructure.size() == 0) {
@@ -45,17 +64,13 @@ public class Rocket {
     public void runMars(){
         this.unit = Player.unit;//Need to update this every round
         unitsInStructure = unit.structureGarrison();
-        System.out.println("ON MARS");
         if(unitsInStructure.size()>0){
             for(int i = 0; i < 8; i++){
-                System.out.println("TRYING TO UNLOAD");
                 if(gc.canUnload(unit.id(), directions[i])){
                     gc.unload(unit.id(), directions[i]);
                     break;
                 }
             }
-        } else {
-            //Player.rockets.remove(this);//No reason to check the rocket anymore
         }
     }
 }

@@ -3,6 +3,25 @@ import bc.*;
 import java.util.*;
 import java.io.*;
 
+/************************************************************************************************
+ * How Team Array Is Stored:
+ *              EARTH
+ * 0 - Number of Rockets launched to Mars
+ * 1 - Number of Workers launched to Mars
+ * 2 - Number of Rangers launched to Mars
+ * 3 - Number of Mages   launched to Mars
+ * 4 - Number of Healers launched to Mars
+ * 5 - Number of Knights launched to Mars
+ *
+ *              MARS
+ * 0 - Number of Rockets added
+ * 1 - Number of Workers added
+ * 2 - Number of Rangers added
+ * 3 - Number of Mages   added
+ * 4 - Number of Healers added
+ * 5 - Number of Knights added
+ *
+ */
 
 public class Player {
     public static GameController gc = new GameController();
@@ -29,11 +48,11 @@ public class Player {
         }
         while (true) {
             try {
-                if(latestArrayIndex==99) {
-                    latestArrayIndex = 0;
-                }
+//                if(latestArrayIndex==99)latestArrayIndex = 0;
                 units = gc.myUnits();
                 communications = gc.getTeamArray((gc.planet() == Planet.Earth) ? Planet.Mars : Planet.Earth);//Set comms to teamArray of other planets
+                if (gc.planet() == Planet.Mars) checkArrayLists(units);
+                maxWorkerAmount = rockets.size() + factories.size() + 1;
                 System.out.println("Current round: " + gc.round() + "\tKarbonite: " + gc.karbonite() + "\tTotal Units: " + units.size() + "\tPlanet: " + gc.planet());
                 for (int i = 0; i < units.size(); i++) {
                     unit = units.get(i);
@@ -41,19 +60,6 @@ public class Player {
                         continue;
                     }
                     switch (unit.unitType()) {
-                        case Worker: //We don't need UnitType.Worker since it is an enum
-                            for (int j = 0; j < workers.size(); j++) {
-                                if (workers.get(j).unit.id() == unit.id()) {
-                                    if (gc.planet() == Planet.Earth) {
-                                        workers.get(j).runEarth();
-                                    } else {
-                                        workers.get(j).runMars();
-                                    }
-                                    break;
-                                }
-                            }
-
-                            break;
                         case Rocket:
                             if (gc.planet() == Planet.Earth) {
                                 for (int j = 0; j < rockets.size(); j++) {
@@ -65,11 +71,9 @@ public class Player {
                                     }
                                 }
                             } else {
-                                for (int j = 0; j < communications.size(); j++) {
-                                    if (communications.get(j) == unit.id()) {
-                                        System.out.println("BEFORE");
+                                for (int j = 0; j < rockets.size(); j++) {
+                                    if (rockets.get(j).unit.id() == unit.id()) {
                                         rockets.get(j).runMars();
-                                        System.out.println("AFTER");
                                         break;
                                     }
                                 }
@@ -80,6 +84,91 @@ public class Player {
                                 if (factories.get(j).unit.id() == unit.id()) {
                                     if (unit.structureIsBuilt() == 1) {
                                         factories.get(j).runEarth();
+                                        break;
+                                    }
+                                }
+                            }
+                            break;
+                        case Worker: //We don't need UnitType.Worker since it is an enum
+                            if (gc.planet() == Planet.Earth) {
+                                for (int j = 0; j < workers.size(); j++) {
+                                    if (workers.get(j).unit.id() == unit.id()) {
+                                        workers.get(j).runEarth();
+                                        break;
+                                    }
+                                }
+                            } else {
+                                for (int j = 0; j < workers.size(); j++) {
+                                    if (workers.get(j).unit.id() == unit.id()) {
+                                        workers.get(j).runMars();
+                                        break;
+                                    }
+                                }
+                            }
+                            break;
+                        case Ranger: //We don't need UnitType.Worker since it is an enum
+                            if (gc.planet() == Planet.Earth) {
+                                for (int j = 0; j < rangers.size(); j++) {
+                                    if (rangers.get(j).unit.id() == unit.id()) {
+                                        rangers.get(j).runEarth();
+                                        break;
+                                    }
+                                }
+                            } else {
+                                for (int j = 0; j < rangers.size(); j++) {
+                                    if (rangers.get(j).unit.id() == unit.id()) {
+                                        rangers.get(j).runMars();
+                                        break;
+                                    }
+                                }
+                            }
+                            break;
+                        case Mage: //We don't need UnitType.Worker since it is an enum
+                            if (gc.planet() == Planet.Earth) {
+                                for (int j = 0; j < mages.size(); j++) {
+                                    if (mages.get(j).unit.id() == unit.id()) {
+                                        mages.get(j).runEarth();
+                                        break;
+                                    }
+                                }
+                            } else {
+                                for (int j = 0; j < mages.size(); j++) {
+                                    if (mages.get(j).unit.id() == unit.id()) {
+                                        mages.get(j).runMars();
+                                        break;
+                                    }
+                                }
+                            }
+                            break;
+                        case Healer: //We don't need UnitType.Worker since it is an enum
+                            if (gc.planet() == Planet.Earth) {
+                                for (int j = 0; j < healers.size(); j++) {
+                                    if (healers.get(j).unit.id() == unit.id()) {
+                                        healers.get(j).runEarth();
+                                        break;
+                                    }
+                                }
+                            } else {
+                                for (int j = 0; j < healers.size(); j++) {
+                                    if (healers.get(j).unit.id() == unit.id()) {
+                                        healers.get(j).runMars();
+                                        break;
+                                    }
+                                }
+                            }
+                            break;
+                        case Knight: //We don't need UnitType.Worker since it is an enum
+                            if (gc.planet() == Planet.Earth) {
+                                for (int j = 0; j < knights.size(); j++) {
+                                    if (knights.get(j).unit.id() == unit.id()) {
+                                        knights.get(j).runEarth();
+                                        break;
+                                    }
+                                }
+                            } else {
+                                for (int j = 0; j < knights.size(); j++) {
+                                    if (knights.get(j).unit.id() == unit.id()) {
+                                        knights.get(j).runMars();
                                         break;
                                     }
                                 }
@@ -159,6 +248,128 @@ public class Player {
             alUnits.get(i).run();
         }
     }*/
+    public static void checkArrayLists(VecUnit units) {
+        if (communications.get(0) > gc.getTeamArray(Planet.Mars).get(0)) {
+            boolean found = false;
+            for (int i = 0; i < communications.get(0) - gc.getTeamArray(Planet.Mars).get(0); i++) {
+                int startArraySize = rockets.size();
+                for (int j = 0; j < units.size(); j++) {
+                    for (int k = 0; k < rockets.size(); k++) {
+                        if (units.get(j).id() == rockets.get(k).unit.id()) {
+                            found = true;
+                            break;
+                        }
+                    }
+                    if (!found) {
+                        rockets.add(new Rocket(units.get(j)));
+                    }
+                }
+                if (startArraySize == rockets.size()) {
+                    break;
+                }
+            }
+        }
+        if (communications.get(1) > gc.getTeamArray(Planet.Mars).get(1)) {
+            boolean found = false;
+            for (int i = 0; i < communications.get(0) - gc.getTeamArray(Planet.Mars).get(0); i++) {
+                int startArraySize = workers.size();
+                for (int j = 0; j < units.size(); j++) {
+                    for (int k = 0; k < workers.size(); k++) {
+                        if (units.get(j).id() == workers.get(k).unit.id()) {
+                            found = true;
+                            break;
+                        }
+                    }
+                    if (!found) {
+                        workers.add(new Worker(units.get(j)));
+                    }
+                }
+                if (startArraySize == workers.size()) {
+                    break;
+                }
+            }
+        }
+        if (communications.get(2) > gc.getTeamArray(Planet.Mars).get(2)) {
+            boolean found = false;
+            for (int i = 0; i < communications.get(0) - gc.getTeamArray(Planet.Mars).get(0); i++) {
+                int startArraySize = rangers.size();
+                for (int j = 0; j < units.size(); j++) {
+                    for (int k = 0; k < rangers.size(); k++) {
+                        if (units.get(j).id() == rangers.get(k).unit.id()) {
+                            found = true;
+                            break;
+                        }
+                    }
+                    if (!found) {
+                        rangers.add(new Ranger(units.get(j)));
+                    }
+                }
+                if (startArraySize == rangers.size()) {
+                    break;
+                }
+            }
+        }
+        if (communications.get(3) > gc.getTeamArray(Planet.Mars).get(3)) {
+            boolean found = false;
+            for (int i = 0; i < communications.get(0) - gc.getTeamArray(Planet.Mars).get(0); i++) {
+                int startArraySize = mages.size();
+                for (int j = 0; j < units.size(); j++) {
+                    for (int k = 0; k < mages.size(); k++) {
+                        if (units.get(j).id() == mages.get(k).unit.id()) {
+                            found = true;
+                            break;
+                        }
+                    }
+                    if (!found) {
+                        mages.add(new Mage(units.get(j)));
+                    }
+                }
+                if (startArraySize == mages.size()) {
+                    break;
+                }
+            }
+        }
+        if (communications.get(4) > gc.getTeamArray(Planet.Mars).get(4)) {
+            boolean found = false;
+            for (int i = 0; i < communications.get(0) - gc.getTeamArray(Planet.Mars).get(0); i++) {
+                int startArraySize = healers.size();
+                for (int j = 0; j < units.size(); j++) {
+                    for (int k = 0; k < healers.size(); k++) {
+                        if (units.get(j).id() == healers.get(k).unit.id()) {
+                            found = true;
+                            break;
+                        }
+                    }
+                    if (!found) {
+                        healers.add(new Healer(units.get(j)));
+                    }
+                }
+                if (startArraySize == healers.size()) {
+                    break;
+                }
+            }
+        }
+        if (communications.get(5) > gc.getTeamArray(Planet.Mars).get(5)) {
+            boolean found = false;
+            for (int i = 0; i < communications.get(0) - gc.getTeamArray(Planet.Mars).get(0); i++) {
+                int startArraySize = knights.size();
+                for (int j = 0; j < units.size(); j++) {
+                    for (int k = 0; k < knights.size(); k++) {
+                        if (units.get(j).id() == knights.get(k).unit.id()) {
+                            found = true;
+                            break;
+                        }
+                    }
+                    if (!found) {
+                        knights.add(new Knight(units.get(j)));
+                    }
+                }
+                if (startArraySize == knights.size()) {
+                    break;
+                }
+            }
+        }
+    }
 
     public static Unit findUnit(Unit creator, UnitType type) {
         VecUnit nearby = gc.myUnits();//gc.senseNearbyUnitsByTeam(creator.location().mapLocation(), 1, myTeam);
@@ -228,7 +439,7 @@ public class Player {
                 }
             }
         }
-        return creator;//Shouldn't ever reach here
+        return null;//Shouldn't ever reach here
     }
 }
 

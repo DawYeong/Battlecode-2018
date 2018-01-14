@@ -25,9 +25,9 @@ public class Worker {
         try {
             project = UnitType.Rocket;
             nearbyStructures = gc.senseNearbyUnitsByType(unit.location().mapLocation(), 1, project);//Need to change so it only checks for our team
-            /*if (unit.abilityHeat() == 0 && Player.workers.size()<Player.maxWorkerAmount) {//Check if can use ability
+            if (unit.abilityHeat() == 0 && Player.workers.size()<Player.maxWorkerAmount) {//Check if can use ability
                 job = "replicate";
-            } else */if (hasBuildable(nearbyStructures)) {
+            } else if (hasBuildable(nearbyStructures)) {
                 job = "build";
             } else if (hasRepairable(nearbyStructures)) {
                 job = "repair";
@@ -56,16 +56,50 @@ public class Worker {
                 default:
                     break;
             }
-            /*if (gc.isMoveReady(unit.id()) && !loadReady) {
+            if (gc.isMoveReady(unit.id()) && !loadReady) {
                 move();
-            }*/
+            }
         } catch (Exception e) {
         }
     }
 
     public void runMars(){
         this.unit = Player.unit;//Need to update this every round
+        try {
+            project = UnitType.Rocket;
+            nearbyStructures = gc.senseNearbyUnitsByType(unit.location().mapLocation(), 1, project);//Need to change so it only checks for our team
+            if (unit.abilityHeat() == 0) {//Check if can use ability
+                job = "replicate";
+            } else if (hasRepairable(nearbyStructures)) {
+                job = "repair";
+            } else {
+                job = "harvest";
+            }
 
+            switch (job) {
+                case "harvest":
+                    harvest();
+                    break;
+                case "blueprint":
+                    blueprint();
+                    break;
+                case "build":
+                    build();
+                    break;
+                case "repair":
+                    repair();
+                    break;
+                case "replicate":
+                    replicate();
+                    break;
+                default:
+                    break;
+            }
+            if (gc.isMoveReady(unit.id()) && !loadReady) {
+                move();
+            }
+        } catch (Exception e) {
+        }
     }
 
     public void move() {
