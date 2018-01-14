@@ -462,40 +462,36 @@ public class Player {
         return null;//Shouldn't ever reach here
     }
 
-    public static void constructGrid(){
-        try {
-            MapLocation tempLocationEarth = new MapLocation(Planet.Earth, 0, 0);
-            MapLocation tempLocationMars = new MapLocation(Planet.Earth, 0, 0);
-            for (int y = 0; y < GridEarth[0].length; y++) {
-                for (int x = 0; x < GridEarth[1].length; x++) {
-                    tempLocationEarth.setX(x);
-                    tempLocationEarth.setY(y);
-                    Cell c;
-                    if (EarthMap.isPassableTerrainAt(tempLocationEarth) != 0) {
-                        c = new Cell(x, y, true, " ");
-                        GridEarth[y][x] = c;
-                    } else {
-                        c = new Cell(x, y, false, "--");
-                        GridEarth[y][x] = c;
-                    }
+    public static void constructGrid() {
+        MapLocation tempLocationEarth = new MapLocation(Planet.Earth, 0, 0);
+        MapLocation tempLocationMars = new MapLocation(Planet.Mars, 0, 0);
+        for (int y = 0; y < GridEarth[0].length; y++) {
+            for (int x = 0; x < GridEarth[1].length; x++) {
+                tempLocationEarth.setX(x);
+                tempLocationEarth.setY(y);
+                Cell c;
+                if (EarthMap.isPassableTerrainAt(tempLocationEarth) != 0) {
+                    c = new Cell(x, y, true, " ");
+                    GridEarth[y][x] = c;
+                } else {
+                    c = new Cell(x, y, false, "--");
+                    GridEarth[y][x] = c;
                 }
             }
-            for (int y = 0; y < GridMars[0].length; y++) {
-                for (int x = 0; x < GridMars[1].length; x++) {
-                    tempLocationMars.setX(x);
-                    tempLocationMars.setY(y);
-                    Cell c;
-                    if (MarsMap.isPassableTerrainAt(tempLocationMars) != 0) {
-                        c = new Cell(x, y, true, " ");
-                        GridMars[y][x] = c;
-                    } else {
-                        c = new Cell(x, y, false, "--");
-                        GridMars[y][x] = c;
-                    }
+        }
+        for (int y = 0; y < GridMars[0].length; y++) {
+            for (int x = 0; x < GridMars[1].length; x++) {
+                tempLocationMars.setX(x);
+                tempLocationMars.setY(y);
+                Cell c;
+                if (MarsMap.isPassableTerrainAt(tempLocationMars) != 0) {
+                    c = new Cell(x, y, true, " ");
+                    GridMars[y][x] = c;
+                } else {
+                    c = new Cell(x, y, false, "--");
+                    GridMars[y][x] = c;
                 }
             }
-        } catch (Exception e){
-
         }
     }
 }
