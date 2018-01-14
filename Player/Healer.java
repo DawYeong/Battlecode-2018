@@ -15,7 +15,12 @@ public class Healer {
 
     }
 
-    public void run(){
+    public void runEarth(){
+        this.unit = Player.unit;//Need to update this every round
+
+    }
+
+    public void runMars(){
         this.unit = Player.unit;//Need to update this every round
 
     }

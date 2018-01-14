@@ -20,7 +20,7 @@ public class Worker {
     public void init() {
     }
 
-    public void run() {
+    public void runEarth() {
         this.unit = Player.unit;//Need to update this every round
         try {
             project = UnitType.Rocket;
@@ -31,7 +31,7 @@ public class Worker {
                 job = "build";
             } else if (hasRepairable(nearbyStructures)) {
                 job = "repair";
-            } else if (gc.karbonite() >= bc.bcUnitTypeBlueprintCost(project) && shouldBlueprint==true) {
+            } else if (gc.karbonite() >= bc.bcUnitTypeBlueprintCost(project) && shouldBlueprint) {
                 job = "blueprint";
             } else {
                 job = "harvest";
@@ -61,6 +61,11 @@ public class Worker {
             }*/
         } catch (Exception e) {
         }
+    }
+
+    public void runMars(){
+        this.unit = Player.unit;//Need to update this every round
+
     }
 
     public void move() {
