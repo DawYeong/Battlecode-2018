@@ -68,7 +68,7 @@ public class Worker {
         try {
             nearbyStructures = gc.senseNearbyUnitsByType(unit.location().mapLocation(), 1, project);//Need to change so it only checks for our team
             findJob();
-
+            System.out.println("HERE3");
             switch (job) {
                 case "harvest":
                     harvest();
@@ -88,7 +88,9 @@ public class Worker {
                 default:
                     break;
             }
+            System.out.println("HERE2");
             if (gc.isMoveReady(unit.id()) && shouldMove) {
+                System.out.println("HERE");
                 move();
             }
         } catch (Exception e) {
@@ -106,11 +108,20 @@ public class Worker {
                         int di2 = directionIndex - i;
                         if (di1 > 8) di1 -= 8;
                         if (di2 < 0) di2 += 8;
-                        if (gc.canMove(unit.id(), directions[di1])) {
+                        MapLocation nextSpot = unit.location().mapLocation().add(directions[di1]);
+                        Location loc = new Location();
+                        loc.mapLocation().setX(nextSpot.getX());
+                        loc.mapLocation().setY(nextSpot.getY());
+                        System.out.println(loc.mapLocation().getX() + " " + loc.mapLocation().getY());
+                        if (nextSpot.getX()>=0 && nextSpot.getX() <=Player.EarthMap.getWidth()-1 && nextSpot.getY()>=0 && nextSpot.getY()<=Player.EarthMap.getHeight()-1 && gc.canMove(unit.id(), directions[di1])) {
                             gc.moveRobot(unit.id(), directions[di1]);
-                        } else if (gc.canMove(unit.id(), directions[di2])) {
-                            gc.moveRobot(unit.id(), directions[di2]);
+                        } else {
+                            nextSpot = unit.location().mapLocation().add(directions[di2]);
+                            if(nextSpot.getX()>=0 && nextSpot.getX() <=Player.EarthMap.getWidth()-1 && nextSpot.getY()>=0 && nextSpot.getY()<=Player.EarthMap.getHeight()-1 && gc.canMove(unit.id(), directions[di2])) {
+                                gc.moveRobot(unit.id(), directions[di2]);
+                            }
                         }
+
                     }
                 } else {
                     finder = new Finder(

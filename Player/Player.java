@@ -60,7 +60,7 @@ public class Player {
                 communications = gc.getTeamArray((gc.planet() == Planet.Earth) ? Planet.Mars : Planet.Earth);//Set comms to teamArray of other planets
                 if (gc.planet() == Planet.Mars) checkArrayLists(units);
                 maxWorkerAmount = (rockets.size()*unitsPerRocket) + (factories.size()*unitsPerFactory);
-                System.out.println("Current round: " + gc.round() + "\tKarbonite: " + gc.karbonite() + "\tTotal Units: " + units.size() + "\tTime Left: " + gc.getTimeLeftMs());//getTimeLeftMs() has yet to be added to the battlecode.jar, just ignore it for now
+                System.out.println("ROUND: " + gc.round() + "\tKARBONITE: " + gc.karbonite()+ "\tTIME: " + gc.getTimeLeftMs());//getTimeLeftMs() has yet to be added to the battlecode.jar, just ignore it for now
                 for (int i = 0; i < units.size(); i++) {
                     unit = units.get(i);
                     if (unit.location().isInGarrison()) {//Skip over these units
