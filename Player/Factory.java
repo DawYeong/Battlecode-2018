@@ -23,8 +23,9 @@ public class Factory {
         unitsInStructure = unit.structureGarrison();
         for (int i = 0; i < 8; i++) {
             if (unitsInStructure.size() < unit.structureMaxCapacity() && unit.isFactoryProducing() == 0) {
-                gc.produceRobot(unit.id(), UnitType.Knight);
-                System.out.println("Produced a knight.\t" + unitsInStructure.size());
+                gc.produceRobot(unit.id(), UnitType.Ranger);
+                System.out.println("Produced a ranger");
+                Player.rangers.add(new Ranger(Player.findUnit(UnitType.Ranger)));
                 break;
             } else if (unitsInStructure.size() > 0 && gc.canUnload(unit.id(), directions[i])) {
                 gc.unload(unit.id(), directions[i]);
