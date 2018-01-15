@@ -25,7 +25,7 @@ public class Player {
 
         Direction[] directions = Direction.values();
         Random random = new Random();
-        Finder finder;
+
 
         PlanetMap EarthMap = gc.startingMap(Planet.Earth);
         System.out.println(EarthMap.getWidth() + " , " + EarthMap.getHeight());
@@ -40,10 +40,10 @@ public class Player {
                 tempLocation.setY(y);
                 Cell c;
                 if (EarthMap.isPassableTerrainAt(tempLocation) != 0) {
-                    c = new Cell(x, y, true, " ");
+                    c = new Cell(x, y, true, 0);
                     Grid[y][x] = c;
                 } else {
-                    c = new Cell(x, y, false, "--");
+                    c = new Cell(x, y, false, -1);
                     Grid[y][x] = c;
                 }
             }
@@ -56,18 +56,39 @@ public class Player {
 
         printMap();
 
-        finder = new Finder(Grid[4][4], Grid[16][19], Grid);
+//        Finder finder;
+//
+//        finder = new Finder(Grid[10][0], Grid[6][19], Grid);
+//
+//        printMap();
+//
+//        finder.findPath();
+//
+//        if (finder.bPathFound) {
+//            System.out.println("Path Found.");
+//
+//            finder.reconstruct_path();
+//        } else {
+//            System.out.println("Path not Found.");
+//        }
 
-        printMap();
+        Finder2 finder2;
 
-        finder.findPath();
+        finder2 = new Finder2(Grid[10][0], Grid[10][19], Grid);
 
-        if (finder.bPathFound) {
+        finder2.findPath();
+
+        ArrayList<Cell> Path;
+
+        if (finder2.bPathFound) {
             System.out.println("Path Found.");
-
-            finder.reconstruct_path();
+            Path = finder2.getPath();
+            for (Cell c : Path) {
+                System.out.println("( " + c.getLocation().getX() + " , " + c.getLocation().getY() + " )");
+            }
+            printMap();
         } else {
-            System.out.println("Path not Found.");
+            System.out.println("Path not found.");
         }
 
         Thread.sleep(100000);
@@ -87,7 +108,7 @@ public class Player {
                 _l = unit.location().mapLocation();
 
                 if (unit.unitType() == UnitType.Worker) {
-                    Grid[_l.getY()][_l.getX()].setValue("W");
+//                    Grid[_l.getY()][_l.getX()].setValue("W");
                 }
 
             }
@@ -100,10 +121,25 @@ public class Player {
     static void printMap() {
         for (int y = 0; y < Grid[0].length; y++) {
             for (int x = 0; x < Grid[1].length; x++) {
-                if (Grid[y][x].getValue().length() == 1) {
-                    System.out.print("0");
+
+                if (!Grid[y][x].isPassable()) {
+                    System.out.print("-- ");
+                    continue;
                 }
-                System.out.print(Grid[y][x].getValue() + " ");
+
+                if (Grid[y][x].getValue() == 0) {
+                    System.out.print("   ");
+                    continue;
+                }
+
+                if (Grid[y][x].getValue() < 0) {
+                    System.out.print(Grid[y][x].getValue() + " ");
+                } else {
+                    if (Grid[y][x].getValue() < 10) {
+                        System.out.print("0");
+                    }
+                    System.out.print(Grid[y][x].getValue() + " ");
+                }
             }
             System.out.println(",");
         }
