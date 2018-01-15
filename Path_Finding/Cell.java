@@ -5,11 +5,12 @@ public class Cell implements Comparable<Cell> {
     private MapLocation location;
     private boolean isPassable;
     private Cell ParentCell;
-    int nH, nG, nF;
-    boolean isTarget;
-    private String value;
 
-    public Cell(int x, int y, boolean isPassable, String value) {
+    private int nH, nG, nF;
+    boolean isTarget;
+    private int value;
+
+    public Cell(int x, int y, boolean isPassable, int value) {
         this.location = new MapLocation(Planet.Earth, x, y);
         this.isPassable = isPassable;
         this.ParentCell = null;
@@ -21,11 +22,11 @@ public class Cell implements Comparable<Cell> {
         ParentCell = null;
     }
 
-    public String getValue() {
+    public int getValue() {
         return value;
     }
 
-    public void setValue(String value) {
+    public void setValue(int value) {
         this.value = value;
     }
 
@@ -53,6 +54,27 @@ public class Cell implements Comparable<Cell> {
         ParentCell = parentCell;
     }
 
+    public int getnH() {
+        return nH;
+    }
+
+    public void setnH(int nH) {
+        this.nH = nH;
+        this.nF = this.nH + this.nG;
+    }
+
+    public int getnG() {
+        return nG;
+    }
+
+    public void setnG(int nG) {
+        this.nG = nG;
+        this.nF = this.nH + this.nG;
+    }
+
+    public int getnF () {
+        return nF;
+    }
 
     @Override
     public int compareTo(Cell o) {
