@@ -116,7 +116,7 @@ public class Ranger {
             for(int i = 0; i < nearbyEnemies.size(); i++) {
                 if(gc.canAttack(unit.id(), nearbyEnemies.get(i).id())) {
                     if(unit.rangerCannotAttackRange() == 0) {
-                        if(gc.canSenseUnit(Mrockets.get(i).id()) && Mrockets.get(i).team() != myTeam) {
+                        if(gc.canSenseUnit(Mrockets.get(i).id()) && Mrockets.get(i).team() != myTeam) { //don't know how to target recently landed rockets
                             gc.attack(unit.id(), Mrockets.get(i).id());
                             return;
                         } else if(gc.canSenseUnit(Mmages.get(i).id()) && Mmages.get(i).team() != myTeam) {
