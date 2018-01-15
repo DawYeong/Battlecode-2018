@@ -31,7 +31,7 @@ public class Player {
     public static Cell GridEarth[][];
     public static Cell GridMars[][];
     public static VecUnit units;
-    public static int maxWorkerAmount = 10;
+    public static int maxWorkerAmount, unitsPerRocket = 3, unitsPerFactory = 4;
     public static ArrayList<Rocket> rockets = new ArrayList<>();
     public static ArrayList<Factory> factories = new ArrayList<>();
     public static ArrayList<Worker> workers = new ArrayList<>();
@@ -59,7 +59,7 @@ public class Player {
                 units = gc.myUnits();
                 communications = gc.getTeamArray((gc.planet() == Planet.Earth) ? Planet.Mars : Planet.Earth);//Set comms to teamArray of other planets
                 if (gc.planet() == Planet.Mars) checkArrayLists(units);
-                maxWorkerAmount = rockets.size() + factories.size() + 1;
+                maxWorkerAmount = (rockets.size()*unitsPerRocket) + (factories.size()*unitsPerFactory);
                 System.out.println("Current round: " + gc.round() + "\tKarbonite: " + gc.karbonite() + "\tTotal Units: " + units.size() + "\tPlanet: " + gc.planet());
                 for (int i = 0; i < units.size(); i++) {
                     unit = units.get(i);
@@ -391,7 +391,7 @@ public class Player {
         }
     }
 
-    public static Unit findUnit(Unit creator, UnitType type) {
+    public static Unit findUnit(UnitType type) {
         VecUnit nearby = gc.myUnits();//gc.senseNearbyUnitsByTeam(creator.location().mapLocation(), 1, myTeam);
         for (int i = 0; i < nearby.size(); i++) {
             boolean found = false;
@@ -462,36 +462,40 @@ public class Player {
         return null;//Shouldn't ever reach here
     }
 
-    public static void constructGrid() {
-        MapLocation tempLocationEarth = new MapLocation(Planet.Earth, 0, 0);
-        MapLocation tempLocationMars = new MapLocation(Planet.Mars, 0, 0);
-        for (int y = 0; y < GridEarth[0].length; y++) {
-            for (int x = 0; x < GridEarth[1].length; x++) {
-                tempLocationEarth.setX(x);
-                tempLocationEarth.setY(y);
-                Cell c;
-                if (EarthMap.isPassableTerrainAt(tempLocationEarth) != 0) {
-                    c = new Cell(x, y, true, " ");
-                    GridEarth[y][x] = c;
-                } else {
-                    c = new Cell(x, y, false, "--");
-                    GridEarth[y][x] = c;
+    public static void constructGrid(){
+        try {
+            MapLocation tempLocationEarth = new MapLocation(Planet.Earth, 0, 0);
+            MapLocation tempLocationMars = new MapLocation(Planet.Mars, 0, 0);
+            for (int y = 0; y < GridEarth[0].length; y++) {
+                for (int x = 0; x < GridEarth[1].length; x++) {
+                    tempLocationEarth.setX(x);
+                    tempLocationEarth.setY(y);
+                    Cell c;
+                    if (EarthMap.isPassableTerrainAt(tempLocationEarth) != 0) {
+                        c = new Cell(x, y, true, " ");
+                        GridEarth[y][x] = c;
+                    } else {
+                        c = new Cell(x, y, false, "--");
+                        GridEarth[y][x] = c;
+                    }
                 }
             }
-        }
-        for (int y = 0; y < GridMars[0].length; y++) {
-            for (int x = 0; x < GridMars[1].length; x++) {
-                tempLocationMars.setX(x);
-                tempLocationMars.setY(y);
-                Cell c;
-                if (MarsMap.isPassableTerrainAt(tempLocationMars) != 0) {
-                    c = new Cell(x, y, true, " ");
-                    GridMars[y][x] = c;
-                } else {
-                    c = new Cell(x, y, false, "--");
-                    GridMars[y][x] = c;
+            for (int y = 0; y < GridMars[0].length; y++) {
+                for (int x = 0; x < GridMars[1].length; x++) {
+                    tempLocationMars.setX(x);
+                    tempLocationMars.setY(y);
+                    Cell c;
+                    if (MarsMap.isPassableTerrainAt(tempLocationMars) != 0) {
+                        c = new Cell(x, y, true, " ");
+                        GridMars[y][x] = c;
+                    } else {
+                        c = new Cell(x, y, false, "--");
+                        GridMars[y][x] = c;
+                    }
                 }
             }
+        } catch (Exception e){
+
         }
     }
 }
