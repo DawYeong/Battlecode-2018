@@ -7,6 +7,8 @@ public class Cell implements Comparable<Cell> {
     int nH, nG, nF;
     boolean isTarget;
     private String value;
+    private boolean marked = false, built = false;//built means has been blueprinted
+    public int distance;
 
     public Cell(int x, int y, boolean isPassable, String value) {
         this.location = new MapLocation(Planet.Earth, x, y);
@@ -51,6 +53,15 @@ public class Cell implements Comparable<Cell> {
     public void setParentCell(Cell parentCell) {
         ParentCell = parentCell;
     }
+
+    public void markSpot(){
+        marked = true;
+    }
+
+    public void markBuilt(){
+        built = true;
+    }
+
 
 
     @Override
