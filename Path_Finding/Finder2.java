@@ -76,12 +76,12 @@ public class Finder2 {
 
             try {
 
-                System.out.println("OpenList:");
-                for (int x = 0; x < OpenList.size(); x++) {
-                    Cell c = OpenList.get(x);
-                    System.out.println("x: " + c.getLocation().getX() + ", y: " + c.getLocation().getY() + ", nF: " + fScore[c.getLocation().getY()][c.getLocation().getX()]);
-                }
-                System.out.println();
+//                System.out.println("OpenList:");
+//                for (int x = 0; x < OpenList.size(); x++) {
+//                    Cell c = OpenList.get(x);
+//                    System.out.println("x: " + c.getLocation().getX() + ", y: " + c.getLocation().getY() + ", nF: " + fScore[c.getLocation().getY()][c.getLocation().getX()]);
+//                }
+//                System.out.println();
 
                 Cell current = OpenList.get(0);
 
@@ -144,7 +144,7 @@ public class Finder2 {
                     fScore[nY][nX] = gScore[nY][nX] + getDist(neighbour, goal);
 
                 }
-                Player.printMap();
+//                Player.printMap();
 //                Thread.sleep(1000);
             } catch (Exception e) {
                 System.out.println("Error Occured:" + e);

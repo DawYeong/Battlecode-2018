@@ -34,7 +34,7 @@ public class Player {
     public static int maxWorkerAmount, unitsPerRocket = 2, unitsPerFactory = 2;
     public static ArrayList<Rocket> rockets = new ArrayList<>();
     public static ArrayList<Factory> factories = new ArrayList<>();
-    public static ArrayList<Worker> workers = new ArrayList<>();
+    public static ArrayList workers = new ArrayList<>();
     public static ArrayList<Ranger> rangers = new ArrayList<>();
     public static ArrayList<Mage> mages = new ArrayList<>();
     public static ArrayList<Healer> healers = new ArrayList<>();

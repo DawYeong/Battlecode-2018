@@ -74,7 +74,7 @@ public class Player {
 
         Finder2 finder2;
 
-        finder2 = new Finder2(Grid[10][0], Grid[10][19], Grid);
+        finder2 = new Finder2(Grid[1][1], Grid[29][28], Grid);
 
         finder2.findPath();
 
