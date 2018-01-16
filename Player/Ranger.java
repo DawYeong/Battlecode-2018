@@ -77,6 +77,71 @@ public class Ranger {
 
     public void attackEarth() {
         try {
+            for (int i = 0; i < Emages.size(); i++) {
+                if (gc.canSenseUnit(Emages.get(i).id()) && Emages.get(i).team() != myTeam) {
+                    if (gc.canAttack(unit.id(), Emages.get(i).id())) {
+                        gc.attack(unit.id(), Emages.get(i).id());
+                        return;
+                    }
+                }
+            }
+            for (int i = 0; i < Erangers.size(); i++) {
+                if (gc.canSenseUnit(Erangers.get(i).id()) && Erangers.get(i).team() != myTeam && Erangers.get(i).rangerIsSniping() == 1) {
+                    if (gc.canAttack(unit.id(), Erangers.get(i).id())) {
+                        gc.attack(unit.id(), Erangers.get(i).id());
+                        return;
+                    }
+                }
+            }
+            for (int i = 0; i < Erangers.size(); i++) {
+                if (gc.canSenseUnit(Erangers.get(i).id()) && Erangers.get(i).team() != myTeam) {
+                    if (gc.canAttack(unit.id(), Erangers.get(i).id())) {
+                        gc.attack(unit.id(), Erangers.get(i).id());
+                        return;
+                    }
+                }
+            }
+            for (int i = 0; i < Eknights.size(); i++) {
+                if (gc.canSenseUnit(Eknights.get(i).id()) && Eknights.get(i).team() != myTeam) {
+                    if (gc.canAttack(unit.id(), Eknights.get(i).id())) {
+                        gc.attack(unit.id(), Eknights.get(i).id());
+                        return;
+                    }
+                }
+            }
+            for (int i = 0; i < Efactories.size(); i++) {
+                if (gc.canSenseUnit(Efactories.get(i).id()) && Efactories.get(i).team() != myTeam) {
+                    if (gc.canAttack(unit.id(), Efactories.get(i).id())) {
+                        gc.attack(unit.id(), Efactories.get(i).id());
+                        return;
+                    }
+                }
+            }
+            for (int i = 0; i < Erockets.size(); i++) {
+                if (gc.canSenseUnit(Erockets.get(i).id()) && Erockets.get(i).team() != myTeam) {
+                    if (gc.canAttack(unit.id(), Erockets.get(i).id())) {
+                        gc.attack(unit.id(), Erockets.get(i).id());
+                        return;
+                    }
+                }
+            }
+            for (int i = 0; i < Ehealers.size(); i++) {
+                if (gc.canSenseUnit(Ehealers.get(i).id()) && Ehealers.get(i).team() != myTeam) {
+                    if (gc.canAttack(unit.id(), Ehealers.get(i).id())) {
+                        gc.attack(unit.id(), Ehealers.get(i).id());
+                        return;
+                    }
+                }
+            }
+            for (int i = 0; i < Eworkers.size(); i++) {
+                if (gc.canSenseUnit(Eworkers.get(i).id()) && Eworkers.get(i).team() != myTeam) {
+                    if (gc.canAttack(unit.id(), Eworkers.get(i).id())) {
+                        gc.attack(unit.id(), Eworkers.get(i).id());
+                        return;
+                    }
+                }
+            }
+            /*
             for (int i = 0; i < nearbyEnemiesA.size(); i++) {
                 if (gc.canAttack(unit.id(), nearbyEnemiesA.get(i).id())) {
                     if (!Erangers.get(i).location().mapLocation().isWithinRange(unit.rangerCannotAttackRange(), unit.location().mapLocation())) { //makes sure that the enemy units is not in the cannot attack range
@@ -108,7 +173,7 @@ public class Ranger {
                     }
                 }
             }
-
+            */
         } catch (Exception e) {
 
         }
@@ -163,7 +228,7 @@ public class Ranger {
             vRangers = gc.senseNearbyUnitsByType(unit.location().mapLocation(), 8, UnitType.Ranger);
             vKnights = gc.senseNearbyUnitsByType(unit.location().mapLocation(), 8, UnitType.Knight);
             vMages = gc.senseNearbyUnitsByType(unit.location().mapLocation(), 8, UnitType.Mage);
-            for (int i = 0; i < nearbyEnemiesV.size(); i++) {
+            for (int i = 0; i < vRangers.size(); i++) {
                 if (gc.canSenseUnit(vRangers.get(i).id()) && vRangers.get(i).team() != myTeam) {
                     if (!unit.location().mapLocation().isWithinRange(vRangers.get(i).attackRange(), vRangers.get(i).location().mapLocation())) {
                         finder = new Finder(Player.GridEarth[unit.location().mapLocation().getY()][unit.location().mapLocation().getX()],
@@ -171,14 +236,13 @@ public class Ranger {
                                 Player.GridEarth);
                         finder.findPath();
                         if (finder.bPathFound) {
-                            finder.reconstructPath();
-                            if (gc.canMove(unit.id(), unit.location().mapLocation().directionTo(finder.nextMove()))) {
-                                gc.moveRobot(unit.id(), unit.location().mapLocation().directionTo(finder.nextMove()));
+                            if (gc.canMove(unit.id(), unit.location().mapLocation().directionTo(finder.getPath().get(0).getLocation()))) {
+                                gc.moveRobot(unit.id(), unit.location().mapLocation().directionTo(finder.getPath().get(0).getLocation()));
                             }
                         }
                         return;
                     } else if (unit.location().mapLocation().isWithinRange(vRangers.get(i).attackRange(), vRangers.get(i).location().mapLocation())) {
-                        if (gc.canAttack(unit.id(), vRangers.get(i).id())) {
+                        if (unit.attackHeat() < 10 && gc.canAttack(unit.id(), vRangers.get(i).id())) {
                             gc.attack(unit.id(), vRangers.get(i).id());
                         }
                         if (vRangers.get(i).location().mapLocation().getX() > unit.location().mapLocation().getX() && vRangers.get(i).location().mapLocation().getY() > unit.location().mapLocation().getY()) {
@@ -259,16 +323,19 @@ public class Ranger {
 
                             }
                         }
-
-                    } else if (!unit.location().mapLocation().isWithinRange(vKnights.get(i).attackRange(), vKnights.get(i).location().mapLocation())) {
+                    }
+                }
+            }
+            for (int i = 0; i < vKnights.size(); i++) {
+                if (gc.canSenseUnit(vKnights.get(i).id()) && vKnights.get(i).team() != myTeam) {
+                    if (!unit.location().mapLocation().isWithinRange(vKnights.get(i).attackRange(), vKnights.get(i).location().mapLocation())) {
                         finder = new Finder(Player.GridEarth[unit.location().mapLocation().getY()][unit.location().mapLocation().getX()],
                                 Player.GridEarth[vKnights.get(i).location().mapLocation().getY()][vKnights.get(i).location().mapLocation().getX()],
                                 Player.GridEarth);
                         finder.findPath();
                         if (finder.bPathFound) {
-                            finder.reconstructPath();
-                            if (gc.canMove(unit.id(), unit.location().mapLocation().directionTo(finder.nextMove()))) {
-                                gc.moveRobot(unit.id(), unit.location().mapLocation().directionTo(finder.nextMove()));
+                            if (gc.canMove(unit.id(), unit.location().mapLocation().directionTo(finder.getPath().get(0).getLocation()))) {
+                                gc.moveRobot(unit.id(), unit.location().mapLocation().directionTo(finder.getPath().get(0).getLocation()));
                             }
                         }
                         return;
@@ -278,15 +345,19 @@ public class Ranger {
                                 gc.moveRobot(unit.id(), directions[j]);
                             }
                         }
+                    }
+                }
+            }
+            for (int i = 0; i < vMages.size(); i++) {
+                if (gc.canSenseUnit(vMages.get(i).id()) && vMages.get(i).team() != myTeam) {
                     } else if (!unit.location().mapLocation().isWithinRange(vMages.get(i).attackRange(), vMages.get(i).location().mapLocation())) {
                         finder = new Finder(Player.GridEarth[unit.location().mapLocation().getY()][unit.location().mapLocation().getX()],
                                 Player.GridEarth[vMages.get(i).location().mapLocation().getY()][vMages.get(i).location().mapLocation().getX()],
                                 Player.GridEarth);
                         finder.findPath();
                         if (finder.bPathFound) {
-                            finder.reconstructPath();
-                            if (gc.canMove(unit.id(), unit.location().mapLocation().directionTo(finder.nextMove()))) {
-                                gc.moveRobot(unit.id(), unit.location().mapLocation().directionTo(finder.nextMove()));
+                            if (gc.canMove(unit.id(), unit.location().mapLocation().directionTo(finder.getPath().get(0).getLocation()))) {
+                                gc.moveRobot(unit.id(), unit.location().mapLocation().directionTo(finder.getPath().get(0).getLocation()));
                             }
                         }
                         return;
@@ -371,8 +442,6 @@ public class Ranger {
                         }
                     }
                 }
-
-            }
         } catch (Exception e) {
 
         }

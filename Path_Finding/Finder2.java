@@ -126,7 +126,7 @@ public class Finder2 {
 
                     if (!OpenList.contains(neighbour)) {
                         OpenList.add(neighbour);
-//                        neighbour.setValue(4);
+                        //neighbour.setValue(4);
                         System.out.println("Added a new neighbour.");
                     }
 

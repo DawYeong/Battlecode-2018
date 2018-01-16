@@ -32,7 +32,7 @@ public class Player {
     public static Cell GridEarth[][];
     public static Cell GridMars[][];
     public static VecUnit units, initialUnits;
-    public static int maxWorkerAmount, unitsPerRocket = 2, unitsPerFactory = 2;
+    public static int maxWorkerAmount, unitsPerRocket = 1, unitsPerFactory = 1;
     public static int firstFactoryId;
     public static ArrayList<Rocket> rockets = new ArrayList<>();
     public static ArrayList<Factory> factories = new ArrayList<>();
@@ -41,7 +41,7 @@ public class Player {
     public static ArrayList<Mage> mages = new ArrayList<>();
     public static ArrayList<Healer> healers = new ArrayList<>();
     public static ArrayList<Knight> knights = new ArrayList<>();
-    public static TreeSet<Cell> distances = new TreeSet<>();
+    public static ArrayList<Cell> distances = new ArrayList<>();
     public static Unit unit;
     public static Veci32 communications;//TEAM ARRAY to comm. between Earth and Mars
     public static long latestArrayIndex = 0;
@@ -64,8 +64,8 @@ public class Player {
                 units = gc.myUnits();
                 communications = gc.getTeamArray((gc.planet() == Planet.Earth) ? Planet.Mars : Planet.Earth);//Set comms to teamArray of other planets
                 if (gc.planet() == Planet.Mars) checkArrayLists(units);
-                maxWorkerAmount = (rockets.size()*unitsPerRocket) + (factories.size()*unitsPerFactory);
-                System.out.println("ROUND: " + gc.round() + "\tKARBONITE: " + gc.karbonite()+ "\tTIME: " + gc.getTimeLeftMs() + "\tWORKERS: " + workers.size());//getTimeLeftMs() has yet to be added to the battlecode.jar, just ignore it for now
+                maxWorkerAmount = (rockets.size() * unitsPerRocket) + (factories.size() * unitsPerFactory);
+                System.out.println("ROUND: " + gc.round() + "\tKARBONITE: " + gc.karbonite() + "\tTIME: " + gc.getTimeLeftMs() + "\tWORKERS: " + workers.size());//getTimeLeftMs() has yet to be added to the battlecode.jar, just ignore it for now
                 for (int i = 0; i < units.size(); i++) {
                     unit = units.get(i);
                     if (unit.location().isInGarrison()) {//Skip over these units
@@ -467,7 +467,7 @@ public class Player {
         return null;//Shouldn't ever reach here
     }
 
-    public static void constructGrid(){
+    public static void constructGrid() {
         try {
             MapLocation tempLocationEarth = new MapLocation(Planet.Earth, 0, 0);
             MapLocation tempLocationMars = new MapLocation(Planet.Mars, 0, 0);
@@ -499,37 +499,41 @@ public class Player {
                     }
                 }
             }
-            for(int i = 0; i < initialUnits.size(); i++){
+            for (int i = 0; i < initialUnits.size(); i++) {
                 Unit unit = initialUnits.get(i);
                 int X = unit.location().mapLocation().getX(), Y = unit.location().mapLocation().getY();
-                if(unit.team()==myTeam){
+                if (unit.team() == myTeam) {
                     GridEarth[Y][X].setValue("Wa");
                 } else {
                     GridEarth[Y][X].setValue("Wb");
                 }
             }
-        } catch (Exception e){
+        } catch (Exception e) {
 
         }
     }
 
-    public static void constructLayout(){
+    public static void constructLayout() {
         try {
             for (int y = 0; y < GridEarth[0].length; y++) {
                 for (int x = 0; x < GridEarth[1].length; x++) {
-                    if(GridEarth[y][x].getValue()==" "){
-                        if(Math.abs(x - gc.unit(firstFactoryId).location().mapLocation().getX()) % 2 == 0){
-                            if(Math.abs(y - gc.unit(firstFactoryId).location().mapLocation().getY()) % 2 == 0) {
+                    if (GridEarth[y][x].getValue() == " ") {
+                        if (Math.abs(x - gc.unit(firstFactoryId).location().mapLocation().getX()) % 2 == 0) {
+                            if (Math.abs(y - gc.unit(firstFactoryId).location().mapLocation().getY()) % 2 == 0) {
                                 GridEarth[y][x].markSpot();
-                                GridEarth[y][x].distance=(int)GridEarth[y][x].getLocation().distanceSquaredTo(gc.unit(firstFactoryId).location().mapLocation());
-                                distances.add(GridEarth[y][x]);//Sorts all the locations by distance from starting factory
+                                GridEarth[y][x].distance = (int) Math.sqrt(GridEarth[y][x].getLocation().distanceSquaredTo(gc.unit(firstFactoryId).location().mapLocation()));
+                                if (GridEarth[y][x].distance != 0) {
+                                    distances.add(GridEarth[y][x]);//Sorts all the locations by distance from starting factory
+                                }
                             }
                         }
                     }
                 }
             }
+            Collections.sort(distances);
             initializedGrid = true;
-        } catch (Exception e){}
+        } catch (Exception e) {
+        }
     }
 }
 

@@ -7,7 +7,7 @@ public class Cell implements Comparable<Cell> {
     int nH, nG, nF;
     boolean isTarget;
     private String value;
-    private boolean marked = false, built = false;//built means has been blueprinted
+    public boolean marked = false;
     public int distance;
 
     public Cell(int x, int y, boolean isPassable, String value) {
@@ -58,15 +58,11 @@ public class Cell implements Comparable<Cell> {
         marked = true;
     }
 
-    public void markBuilt(){
-        built = true;
-    }
-
 
 
     @Override
     public int compareTo(Cell o) {
         // return in descending order
-        return this.nF - o.nF;
+        return this.distance - o.distance;
     }
 }

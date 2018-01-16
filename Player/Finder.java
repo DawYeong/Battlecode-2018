@@ -5,163 +5,156 @@ import java.util.ArrayList;
 import java.util.Collections;
 
 public class Finder {
-    private Cell start, end;
-    private Cell[][] Grid;
-    private int Visited[][];
 
-    private ArrayList<Cell> OpenList = new ArrayList<Cell>();
-    private ArrayList<Cell> Path = new ArrayList<Cell>();
-    boolean bPathFound = false;
+    // set of currently discovered nodes that are not evaluated yet
+    private ArrayList<Cell> OpenList = new ArrayList<>();
+    // set of nodes already evaluated
+    private ArrayList<Cell> ClosedList = new ArrayList<>();
+    // for each node, stores the node that it can most efficiently be reached from
+    private Cell[][] cameFrom;
+    // for each node, the cost of going from the start to that node
+    private int[][] gScore;
+    // for each node, the total cost of getting from the start node the goal
+    private int[][] fScore;
+    // the final path (if found)
+    private ArrayList<Cell> Path = new ArrayList<>();
+
     private Direction[] directions;
 
-    public Finder(Cell start, Cell end, Cell[][] Grid) {
+    private Cell start, goal;
+    private Cell[][] Grid;
+    private int width, height;
+    boolean bPathFound = false;
+
+    public Finder(Cell start, Cell goal, Cell[][] Grid) {
         this.start = start;
-        this.end = end;
+        this.goal = goal;
         this.Grid = Grid;
+
+        height = Grid[0].length;
+        width = Grid[1].length;
+
+        init();
+    }
+
+    private void init() {
+        cameFrom = new Cell[height][width];
+        gScore = new int[height][width];
+        fScore = new int[height][width];
+
+        for (int y = 0; y < height; y++) {
+            for (int x = 0; x < width; x++) {
+                cameFrom[y][x] = null;
+                gScore[y][x] = 99;
+                fScore[y][x] = getDist(Grid[y][x], goal);
+
+            }
+        }
+
+        gScore[start.getLocation().getY()][start.getLocation().getX()] = 0;
+        fScore[start.getLocation().getY()][start.getLocation().getX()] = getDist(start, goal);
+        OpenList.add(start);
 
         directions = Direction.values();
 
-        Visited = new int[Grid[0].length][Grid[1].length];
-        for (int y = 0; y < Visited[0].length; y++) {
-            for (int x = 0; x < Visited[1].length; x++) {
-                this.Visited[y][x] = 0;
-            }
-        }
-        calcHueristics();
-        OpenList.add(start);
-        end.isTarget = true;
-        end.setValue("EE");
-        start.setValue("SS");
-
-        Visited[start.getLocation().getY()][start.getLocation().getX()] = 2;
-        Visited[end.getLocation().getY()][end.getLocation().getX()] = 3;
-    }
-
-    public void calcHueristics() {
-        // distance from end
-        int vertical = 0, horizontal = 0;
-
-        for (int y = 0; y < Grid[0].length; y++) {
-            for (int x = 0; x < Grid[1].length; x++) {
-                Cell c = Grid[y][x];
-
-                if (!c.isPassable()) {
-                    continue;
-                }
-
-                vertical = Math.abs(c.getLocation().getY() - end.getLocation().getY());
-                horizontal = Math.abs(c.getLocation().getX() - end.getLocation().getX());
-
-                c.nH = (vertical + horizontal);
-                c.nF = c.nH + c.nG;
-
-//                System.out.println("x: " + c.getLocation().getX() + ", y: " + c.getLocation().getY() + ", nF: " + c.nF);
-
-                if (c != end && c != start) {
-                    c.setValue(Integer.toString(c.nH));
-//                    System.out.println(c.nF);
-                }
-            }
-        }
     }
 
     public void findPath() {
+//        Thread.sleep(5000);
+
+        int tempG;
+        int nX, nY;
+        MapLocation tempLocation;
+
         while (OpenList.size() != 0 && !bPathFound) {
-            Collections.sort(OpenList);
+//            Collections.sort(OpenList);
 
-//            System.out.println("OpenList:");
-//            for (int x = 0; x < OpenList.size(); x++) {
-//                Cell c = OpenList.get(x);
-//                System.out.println("x: " + c.getLocation().getX() + ", y: " + c.getLocation().getY() + ", nF: " + c.nF);
-//            }
-//            System.out.println();
+            try {
 
-            Cell cuurent = OpenList.get(0);
-            Visited[cuurent.getLocation().getY()][cuurent.getLocation().getX()] = 1;
-            OpenList.remove(cuurent);
-            int tempG;
-            int nX, nY;
+                Cell current = OpenList.get(0);
 
-            for (int i = 0; i < 8; i++) {
-
-                try {
-                    MapLocation neighbourDir = cuurent.getLocation().add(directions[i]);
-                    nX = neighbourDir.getX();
-                    nY = neighbourDir.getY();
-                    Cell n = Grid[nY][nX];
-
-                    if (n == end) {
-                        Path.add(cuurent);
-                        bPathFound = true;
-                        break;
+                for (int x = 0; x < OpenList.size(); x++) {
+                    Cell other = OpenList.get(x);
+                    if (fScore[other.getLocation().getY()][other.getLocation().getX()] <= fScore[current.getLocation().getY()][current.getLocation().getX()]) {
+                        current = other;
                     }
-
-                    if (n.isPassable()) {
-                        if (Visited[nY][nX] == 1) {
-                            continue;
-                        }
-
-                        if (!OpenList.contains(n)) {
-                            n.setParentCell(cuurent);
-                            OpenList.add(n);
-                        }
-
-                        // the cost of moving to this neighbour
-                        tempG = cuurent.nG + 1;
-
-                        // if the cost is not lower than before
-                        if (tempG > cuurent.nG) {
-                            continue;
-                        }
-                        n.setParentCell(cuurent);
-                        n.nG = tempG;
-                        n.nF = n.nH + n.nG;
-
-                    }
-                } catch (Exception e) {
                 }
+
+                ClosedList.add(current);
+                OpenList.remove(current);
+
+                if (current == goal) {
+                    reconstruct_path(current);
+                    bPathFound = true;
+                    break;
+                }
+
+                for (int d = 0; d < directions.length - 1; d++) {
+                    tempLocation = current.getLocation().add(directions[d]);
+                    nX = tempLocation.getX();
+                    nY = tempLocation.getY();
+
+
+                    Cell neighbour = Grid[nY][nX];
+
+                    if (!neighbour.isPassable()) {
+                        continue;
+                    }
+
+
+                    if (ClosedList.contains(neighbour)) {
+                        continue;
+                    }
+
+                    if (!OpenList.contains(neighbour)) {
+                        OpenList.add(neighbour);
+                        //neighbour.setValue(4);
+                    }
+
+                    if (d % 2 == 0) {
+                        tempG = gScore[current.getLocation().getY()][current.getLocation().getX()] + 2;
+                    } else {
+                        tempG = gScore[current.getLocation().getY()][current.getLocation().getX()] + 3;
+                    }
+                    if (tempG >= gScore[neighbour.getLocation().getY()][neighbour.getLocation().getX()]) {
+                        continue;
+                    }
+
+                    cameFrom[nY][nX] = current;
+                    gScore[nY][nX] = tempG;
+                    fScore[nY][nX] = gScore[nY][nX] + getDist(neighbour, goal);
+
+                }
+//                Thread.sleep(1000);
+            } catch (Exception e) {
             }
 
-//            for (int y = 0; y < Visited[0].length; y++) {
-//                for (int x = 0; x < Visited[1].length; x++) {
-//                    System.out.print(Visited[y][x] + " ");
-//                }
-//                System.out.println(", ");
-//            }
-//            System.out.println();
-//
-//            System.out.println("Map:");
-//
-//
-//            for (int y = 0; y < Grid[0].length; y++) {
-//                for (int x = 0; x < Grid[1].length; x++) {
-//                    if (Grid[y][x].getValue().length() == 1) {
-//                        System.out.print("0");
-//                    }
-//                    System.out.print(Grid[y][x].getValue() + " ");
-//                }
-//                System.out.println(",");
-//            }
-//            System.out.println();
         }
-
     }
 
-    public void reconstructPath() {
-        Cell current = Path.get(Path.size() - 1);
+    public int getDist(Cell c1, Cell c2) {
+        int vertical, horizontal;
 
-        int cx, cy;
+        vertical = Math.abs(c1.getLocation().getY() - c2.getLocation().getY());
+        horizontal = Math.abs(c1.getLocation().getX() - c2.getLocation().getX());
 
-        while (current != start) {
-            cx = current.getLocation().getX();
-            cy = current.getLocation().getY();
-            current.setValue("++");
-            current = current.getParentCell();
+        return (vertical + horizontal);
+    }
+
+    public void reconstruct_path(Cell current) {
+        Path.add(current);
+//        System.out.println("x: " + current.getLocation().getX() + ", y: " + current.getLocation().getY());
+        while (cameFrom[current.getLocation().getY()][current.getLocation().getX()] != null && current != start) {
+//            System.out.println("( " + current.getLocation().getX() + " , " + current.getLocation().getY() + " )");
+            current = cameFrom[current.getLocation().getY()][current.getLocation().getX()];
             Path.add(current);
         }
+        Path.remove(goal);
+        Path.remove(start);
+        Collections.reverse(Path);
     }
 
-    public MapLocation nextMove(){
-        return Path.get(0).getLocation();
+    public ArrayList<Cell> getPath() {
+        return Path;
     }
 }
