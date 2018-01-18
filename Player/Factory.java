@@ -19,7 +19,7 @@ public class Factory {
     }
 
     public void runEarth() { //No runMars() since Factories can't be on Mars, left as runEarth() so everything is in unison
-        this.unit = Player.unit;//Need to update this every round
+        /*this.unit = Player.unit;//Need to update this every round
         unitsInStructure = unit.structureGarrison();
         for (int i = 0; i < 8; i++) {
             if (unitsInStructure.size() < unit.structureMaxCapacity() && unit.isFactoryProducing() == 0) {
@@ -32,6 +32,6 @@ public class Factory {
             } else {
                 break;
             }
-        }
+        }*/
     }
 }

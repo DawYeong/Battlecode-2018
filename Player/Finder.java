@@ -97,7 +97,7 @@ public class Finder {
 
                     Cell neighbour = Grid[nY][nX];
 
-                    if (!neighbour.isPassable()) {
+                    if (!neighbour.isPassable() || neighbour.getValue() != null) {
                         continue;
                     }
 

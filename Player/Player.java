@@ -36,7 +36,7 @@ public class Player {
     public static int firstFactoryId;
     public static ArrayList<Rocket> rockets = new ArrayList<>();
     public static ArrayList<Factory> factories = new ArrayList<>();
-    public static ArrayList workers = new ArrayList<>();
+    public static ArrayList<Worker> workers = new ArrayList<>();
     public static ArrayList<Ranger> rangers = new ArrayList<>();
     public static ArrayList<Mage> mages = new ArrayList<>();
     public static ArrayList<Healer> healers = new ArrayList<>();
@@ -263,16 +263,13 @@ public class Player {
                 }*/
 
             } catch (Exception e) {
+                System.out.println(e);
+                System.out.println(e.getStackTrace()[0]);
             }
             gc.nextTurn();
         }
     }
 
-    /*public static void callRun(ArrayList alUnits){
-        for(int i = 0; i < alUnits.size(); i++){
-            alUnits.get(i).run();
-        }
-    }*/
     public static void checkArrayLists(VecUnit units) {
         if (communications.get(0) > gc.getTeamArray(Planet.Mars).get(0)) {
             boolean found = false;
@@ -477,7 +474,7 @@ public class Player {
                     tempLocationEarth.setY(y);
                     Cell c;
                     if (EarthMap.isPassableTerrainAt(tempLocationEarth) != 0) {
-                        c = new Cell(x, y, true, " ");
+                        c = new Cell(x, y, true, null);
                         GridEarth[y][x] = c;
                     } else {
                         c = new Cell(x, y, false, "--");
@@ -491,7 +488,7 @@ public class Player {
                     tempLocationMars.setY(y);
                     Cell c;
                     if (MarsMap.isPassableTerrainAt(tempLocationMars) != 0) {
-                        c = new Cell(x, y, true, " ");
+                        c = new Cell(x, y, true, null);
                         GridMars[y][x] = c;
                     } else {
                         c = new Cell(x, y, false, "--");
@@ -517,7 +514,7 @@ public class Player {
         try {
             for (int y = 0; y < GridEarth[0].length; y++) {
                 for (int x = 0; x < GridEarth[1].length; x++) {
-                    if (GridEarth[y][x].getValue() == " ") {
+                    if (GridEarth[y][x].getValue() == null) {
                         if (Math.abs(x - gc.unit(firstFactoryId).location().mapLocation().getX()) % 2 == 0) {
                             if (Math.abs(y - gc.unit(firstFactoryId).location().mapLocation().getY()) % 2 == 0) {
                                 GridEarth[y][x].markSpot();
