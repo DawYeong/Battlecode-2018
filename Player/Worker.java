@@ -30,17 +30,18 @@ public class Worker {
             }*/
             project = UnitType.Factory;
             if (Player.initializedGrid) {
-                if(projectCell == null) {
+                if (projectCell == null) {
                     shouldMove = true;
                     findProject();
-                } else if(gc.hasUnitAtLocation(projectCell.getLocation())){
-                    if(gc.senseUnitAtLocation(projectCell.getLocation()).structureIsBuilt()==1){
+                } else if (gc.hasUnitAtLocation(projectCell.getLocation())) {
+                    if (gc.senseUnitAtLocation(projectCell.getLocation()).structureIsBuilt() == 1) {
                         shouldMove = true;
                         findProject();
                     }
                 }
             }
             findJob();
+            System.out.println(projectCell.getLocation());
             switch (job) {
                 case "harvest":
                     harvest();
@@ -114,21 +115,29 @@ public class Worker {
                         if (di2 < 0) di2 += 8;
                         if (gc.canMove(unit.id(), directions[di1])) {
                             gc.moveRobot(unit.id(), directions[di1]);
+                            System.out.println("HERE1");
                             break;
                         } else if (gc.canMove(unit.id(), directions[di2])) {
                             gc.moveRobot(unit.id(), directions[di2]);
+                            System.out.println("HERE1");
                             break;
                         }
                     }
                 } else {
-                    finder = new Finder(
+                    /*finder = new Finder(
                             Player.GridEarth[unit.location().mapLocation().getY()][unit.location().mapLocation().getX()],
                             Player.GridEarth[projectCell.getLocation().getY()][projectCell.getLocation().getX()],
+                            Player.GridEarth);*/
+                    finder = new Finder(
+                            Player.GridEarth[unit.location().mapLocation().getY()][unit.location().mapLocation().getX()],
+                            Player.GridEarth[19][10],
                             Player.GridEarth);
                     finder.findPath();
+                    System.out.println(finder.bPathFound);
                     if (finder.bPathFound && finder.getPath().size() > 1) {
                         if (gc.canMove(unit.id(), unit.location().mapLocation().directionTo(finder.getPath().get(0).getLocation()))) {
                             gc.moveRobot(unit.id(), unit.location().mapLocation().directionTo(finder.getPath().get(0).getLocation()));
+                            System.out.println("HERE2");
                         } else {
                             shouldMove = false;
                         }
@@ -154,20 +163,22 @@ public class Worker {
     public void findJob() {
         try {
             if (gc.planet() == Planet.Earth) {
-                if (unit.abilityHeat() == 0 && Player.workers.size() < Player.maxWorkerAmount) {//Check if can use ability
+                /*if (unit.abilityHeat() == 0 && Player.workers.size() < Player.maxWorkerAmount+1) {//Check if can use ability
                     if (canReplicate()) {
                         job = "replicate";
                         return;
                     }
-                }
+                }*/
                 if (projectCell != null) {
-                    if (gc.hasUnitAtLocation(projectCell.getLocation())) {
-                        if (gc.canBuild(unit.id(), gc.senseUnitAtLocation(projectCell.getLocation()).id())) {
-                            job = "build";
-                            return;
-                        }
+                    if (projectCell.blueprinted && !projectCell.built) {
+                        //if (gc.canBuild(unit.id(), gc.senseUnitAtLocation(projectCell.getLocation()).id())) {
+                        job = "build";
+                        return;
+                        //}
                     }
+                    if(projectCell.built)projectCell = null;
                 }
+
                 if (gc.karbonite() >= bc.bcUnitTypeBlueprintCost(project)) {
                     if (canBlueprint()) {
                         job = "blueprint";
@@ -177,7 +188,7 @@ public class Worker {
                         return;
                     }
                 }
-                nearbyStructures = gc.senseNearbyUnitsByType(unit.location().mapLocation(), 1, project);//Need to change so it only checks for our team
+                nearbyStructures = gc.senseNearbyUnitsByType(unit.location().mapLocation(), 2, project);//Need to change so it only checks for our team
                 if (hasRepairable(nearbyStructures)) {
                     job = "repair";
                     return;
@@ -188,7 +199,6 @@ public class Worker {
 
             }
         } catch (Exception e) {
-
         }
     }
 
@@ -231,7 +241,8 @@ public class Worker {
                                     Player.factories.add(new Factory(Player.findUnit(project)));
                                     break;
                             }
-                            project = null;
+                            projectCell = null;
+                            projectCell.blueprinted = true;
                             return;
                         }
                     }
@@ -245,9 +256,18 @@ public class Worker {
 
     public void build() {
         try {
-            gc.build(unit.id(), gc.senseUnitAtLocation(projectCell.getLocation()).id());
-            if (gc.unit(gc.senseUnitAtLocation(projectCell.getLocation()).id()).structureIsBuilt() == 1) {
-                Player.distances.remove(0);
+            if (gc.hasUnitAtLocation(projectCell.getLocation())) {
+                gc.build(unit.id(), gc.senseUnitAtLocation(projectCell.getLocation()).id());
+
+                if (gc.unit(gc.senseUnitAtLocation(projectCell.getLocation()).id()).structureIsBuilt() == 1) {
+                    Player.distances.remove(projectCell);
+                    projectCell.built = true;
+                    projectCell = null;
+
+                }
+            } else {
+                projectCell.blueprinted = false;
+                projectCell.built = false;
                 projectCell = null;
             }
         } catch (Exception e) {
@@ -328,6 +348,9 @@ public class Worker {
                         gc.blueprint(unit.id(), project, directions[di1]);
                         shouldMove = false;
                         Player.firstFactoryId = Player.findUnit(project).id();
+                        //Cell firstFactory = new Cell(gc.unit(Player.firstFactoryId).location().mapLocation().getX(), gc.unit(Player.firstFactoryId).location().mapLocation().getY(), true, "Fa");
+                        //Player.distances.add(firstFactory);
+                        //Player.distances.get(0).blueprinted = true;
                         switch (project) {
                             case Rocket:
                                 Player.rockets.add(new Rocket(gc.unit(Player.firstFactoryId)));
@@ -341,6 +364,9 @@ public class Worker {
                         gc.blueprint(unit.id(), project, directions[di2]);
                         shouldMove = false;
                         Player.firstFactoryId = Player.findUnit(project).id();
+                        //Cell firstFactory = new Cell(gc.unit(Player.firstFactoryId).location().mapLocation().getX(), gc.unit(Player.firstFactoryId).location().mapLocation().getY(), true, "Fa");
+                        //Player.distances.add(firstFactory);
+                        //Player.distances.get(0).blueprinted = true;
                         switch (project) {
                             case Rocket:
                                 Player.rockets.add(new Rocket(gc.unit(Player.firstFactoryId)));
@@ -368,15 +394,16 @@ public class Worker {
             do {
                 projectCell = (Player.distances.size() > i) ? Player.distances.get(i) : null;
                 i++;
-            } while (unit.location().mapLocation() == projectCell.getLocation());
+            } while (unit.location().mapLocation() == projectCell.getLocation() || projectCell.built);
         } catch (Exception e) {
+            projectCell = null;
         }
     }
 
     public boolean hasRepairable(VecUnit structures) {
         try {
             for (int i = 0; i < structures.size(); i++) {
-                if (structures.get(i).health() < structures.get(i).maxHealth() && structures.get(i).team() == Player.myTeam && structures.get(i).structureIsBuilt()==1) {
+                if (structures.get(i).health() < structures.get(i).maxHealth() && structures.get(i).team() == Player.myTeam && structures.get(i).structureIsBuilt() == 1) {
                     return true;
                 }
             }

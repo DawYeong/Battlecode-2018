@@ -7,7 +7,7 @@ public class Cell implements Comparable<Cell> {
     int nH, nG, nF;
     boolean isTarget;
     private String value;
-    public boolean marked = false;
+    public boolean marked = false, built = false, blueprinted = false;
     public int distance;
 
     public Cell(int x, int y, boolean isPassable, String value) {
