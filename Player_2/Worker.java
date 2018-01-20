@@ -33,6 +33,7 @@ public class Worker {
             } else {
                 project = UnitType.Factory;
             }
+            project = UnitType.Factory;
             findJob();
             if (unit.abilityHeat() == 0 && Player.workers.size() < Player.maxWorkerAmount + 1) {//Check if can use ability
                 replicate();//Replicate isn't an action, it's an ability so the cooldown is seperate
@@ -51,8 +52,7 @@ public class Worker {
                     repair();
                     break;
             }
-
-            if (gc.isMoveReady(unit.id()) && shouldMove) {
+            if (gc.isMoveReady(unit.id())/* && shouldMove*/) {
                 move();
             }
         } catch (Exception e) {
@@ -102,6 +102,7 @@ public class Worker {
                             Player.GridEarth[karboniteLocation.getY()][karboniteLocation.getX()],
                             Player.GridEarth);
                     finder.findPath();
+                    System.out.println(finder.bPathFound + "\t" + finder.getPath().size());
                     if (finder.bPathFound && finder.getPath().size() > 0) {
                         if (gc.canMove(unit.id(), location.directionTo(finder.getPath().get(0).getLocation()))) {
                             Player.GridEarth[location.getY()][location.getX()].setValue(null);
@@ -141,7 +142,7 @@ public class Worker {
                 }
 
                 //BLUEPRINT
-                if (gc.karbonite() >= bc.bcUnitTypeBlueprintCost(project) && Player.rangers.size() < 20) {
+                if (gc.karbonite() >= bc.bcUnitTypeBlueprintCost(project) && canBlueprint()) {
                     job = "blueprint";
                     return;
                 }
@@ -197,29 +198,29 @@ public class Worker {
                     if (di1 > 7) di1 -= 8;
                     if (di2 < 0) di2 += 8;
                     if (gc.canBlueprint(unit.id(), project, directions[di1])) {
-                        if(hasNearbyStructures(location.add(directions[di1])))continue;
+                        if (hasNearbyStructures(location.add(directions[di1]))) continue;
                         gc.blueprint(unit.id(), project, directions[di1]);
                         switch (project) {
                             case Rocket:
                                 Player.rockets.add(new Rocket(Player.findUnit(UnitType.Rocket)));
-                                Player.GridEarth[Player.rockets.get(Player.rockets.size()-1).unit.location().mapLocation().getY()][Player.rockets.get(Player.rockets.size()-1).unit.location().mapLocation().getX()].setValue("--");
+                                Player.GridEarth[Player.rockets.get(Player.rockets.size() - 1).unit.location().mapLocation().getY()][Player.rockets.get(Player.rockets.size() - 1).unit.location().mapLocation().getX()].setValue("--");
                                 break;
                             case Factory:
                                 Player.factories.add(new Factory(Player.findUnit(UnitType.Factory)));
-                                Player.GridEarth[Player.factories.get(Player.factories.size()-1).unit.location().mapLocation().getY()][Player.factories.get(Player.factories.size()-1).unit.location().mapLocation().getX()].setValue("--");
+                                Player.GridEarth[Player.factories.get(Player.factories.size() - 1).unit.location().mapLocation().getY()][Player.factories.get(Player.factories.size() - 1).unit.location().mapLocation().getX()].setValue("--");
                                 break;
                         }
                     } else if (gc.canBlueprint(unit.id(), project, directions[di2])) {
-                        if(hasNearbyStructures(location.add(directions[di2])))continue;
+                        if (hasNearbyStructures(location.add(directions[di2]))) continue;
                         gc.blueprint(unit.id(), project, directions[di2]);
                         switch (project) {
                             case Rocket:
                                 Player.rockets.add(new Rocket(Player.findUnit(UnitType.Rocket)));
-                                Player.GridEarth[Player.rockets.get(Player.rockets.size()-1).unit.location().mapLocation().getY()][Player.rockets.get(Player.rockets.size()-1).unit.location().mapLocation().getX()].setValue("--");
+                                Player.GridEarth[Player.rockets.get(Player.rockets.size() - 1).unit.location().mapLocation().getY()][Player.rockets.get(Player.rockets.size() - 1).unit.location().mapLocation().getX()].setValue("--");
                                 break;
                             case Factory:
                                 Player.factories.add(new Factory(Player.findUnit(UnitType.Factory)));
-                                Player.GridEarth[Player.factories.get(Player.factories.size()-1).unit.location().mapLocation().getY()][Player.factories.get(Player.factories.size()-1).unit.location().mapLocation().getX()].setValue("--");
+                                Player.GridEarth[Player.factories.get(Player.factories.size() - 1).unit.location().mapLocation().getY()][Player.factories.get(Player.factories.size() - 1).unit.location().mapLocation().getX()].setValue("--");
                                 break;
                         }
                     }
@@ -230,10 +231,11 @@ public class Worker {
 
         }
     }
-    public boolean hasNearbyStructures(MapLocation loc){
-        for(int i = 0; i < 8; i++){
-            if(gc.hasUnitAtLocation(loc.add(directions[i]))){
-                if(gc.senseUnitAtLocation(loc.add(directions[i])).unitType()==UnitType.Factory || gc.senseUnitAtLocation(loc.add(directions[i])).unitType()==UnitType.Rocket){
+
+    public boolean hasNearbyStructures(MapLocation loc) {
+        for (int i = 0; i < 8; i++) {
+            if (gc.hasUnitAtLocation(loc.add(directions[i]))) {
+                if (gc.senseUnitAtLocation(loc.add(directions[i])).unitType() == UnitType.Factory || gc.senseUnitAtLocation(loc.add(directions[i])).unitType() == UnitType.Rocket) {
                     return true;
                 }
             }
@@ -246,7 +248,7 @@ public class Worker {
             for (int i = 0; i < structures.size(); i++) {
                 if (gc.canBuild(unit.id(), structures.get(i).id()) && structures.get(i).team() == Player.myTeam && structures.get(i).structureIsBuilt() == 0) {
                     gc.build(unit.id(), structures.get(i).id());
-                    shouldMove = (structures.get(i).structureIsBuilt() == 1) ? true : false;
+                    //shouldMove = (structures.get(i).structureIsBuilt() == 1) ? true : false;
                     break;
                 }
             }
@@ -286,11 +288,11 @@ public class Worker {
                     if (gc.canReplicate(unit.id(), directions[di1])) {
                         gc.replicate(unit.id(), directions[di1]);
                         Player.workers.add(new Worker(Player.findUnit(UnitType.Worker)));
-                        Player.GridEarth[Player.workers.get(Player.workers.size()-1).unit.location().mapLocation().getY()][Player.workers.get(Player.workers.size()-1).unit.location().mapLocation().getX()].setValue("--");
+                        Player.GridEarth[Player.workers.get(Player.workers.size() - 1).unit.location().mapLocation().getY()][Player.workers.get(Player.workers.size() - 1).unit.location().mapLocation().getX()].setValue("--");
                     } else if (gc.canBlueprint(unit.id(), project, directions[di2])) {
                         gc.replicate(unit.id(), directions[di2]);
                         Player.workers.add(new Worker(Player.findUnit(UnitType.Worker)));
-                        Player.GridEarth[Player.workers.get(Player.workers.size()-1).unit.location().mapLocation().getY()][Player.workers.get(Player.workers.size()-1).unit.location().mapLocation().getX()].setValue("--");
+                        Player.GridEarth[Player.workers.get(Player.workers.size() - 1).unit.location().mapLocation().getY()][Player.workers.get(Player.workers.size() - 1).unit.location().mapLocation().getX()].setValue("--");
                     }
                 } catch (Exception e) {
                 }
@@ -324,6 +326,22 @@ public class Worker {
 
         }
         return false;
+    }
+
+    public boolean canBlueprint() {
+        for (int i = 0; i < 8; i++) {
+            if (gc.canBlueprint(unit.id(), project, directions[i])) {
+                MapLocation loc = location.add(directions[i]);
+                for (int j = 0; j < 8; j++) {
+                    if (gc.hasUnitAtLocation(loc.add(directions[j]))) {
+                        if (gc.senseUnitAtLocation(loc.add(directions[j])).unitType() == UnitType.Factory || gc.senseUnitAtLocation(loc.add(directions[j])).unitType() == UnitType.Rocket) {
+                            return false;
+                        }
+                    }
+                }
+            }
+        }
+        return true;
     }
 
     public MapLocation findKarbonite() {
