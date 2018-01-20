@@ -128,7 +128,11 @@ public class Worker {
                     }
                 } else {
                     finder = new Finder(
+<<<<<<< Updated upstream
                             Player.GridEarth[location.getY()][location.getX()],
+=======
+                            Player.GridEarth[unit.location().mapLocation().getY()][unit.location().mapLocation().getX()],
+>>>>>>> Stashed changes
                             Player.GridEarth[projectCell.getLocation().getY()][projectCell.getLocation().getX()],
                             Player.GridEarth);
                     finder.findPath();
@@ -167,11 +171,26 @@ public class Worker {
                         job = "replicate";
                         return;
                     }
+<<<<<<< Updated upstream
                 }
                 nearbyStructures = gc.senseNearbyUnitsByType(location, 2, project);//Need to change so it only checks for our team
                 if (hasBuildable(nearbyStructures)) {
                     job = "build";
                     return;
+=======
+                }*/
+                if (projectCell != null) {
+                    if (projectCell.blueprinted && !projectCell.built) {
+                        System.out.println("Project Cell Blueprinted.");
+                        //if (gc.canBuild(unit.id(), gc.senseUnitAtLocation(projectCell.getLocation()).id())) {
+                        job = "build";
+                        return;
+                        //}
+                    }
+                    if (projectCell.built) projectCell = null;
+                } else {
+                    System.out.println("Project cell is null.   ");
+>>>>>>> Stashed changes
                 }
 
 
