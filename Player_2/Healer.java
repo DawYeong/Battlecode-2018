@@ -8,6 +8,7 @@ public class Healer {
     public static GameController gc = Player.gc;
     public static Direction[] directions = Player.directions;
     public static VecUnit ownteam;
+    public Finder finder;
 
     Healer(Unit unit) {
         this.unit = unit;
@@ -20,6 +21,13 @@ public class Healer {
 
     public void runEarth() {
         this.unit = Player.unit;//Need to update this every round
+        try {
+            ownteam = gc.senseNearbyUnitsByTeam(unit.location().mapLocation(), 7, unit.team()); // within vision range
+            moveToLowestHealth();
+            healing();
+        } catch (Exception e) {
+
+        }
 
     }
 
@@ -28,23 +36,49 @@ public class Healer {
 
     }
 
-    public void healing() {
+    public void moveToLowestHealth() {
         try {
-            long lowestHealth = 0;
-            ownteam = gc.senseNearbyUnitsByTeam(unit.location().mapLocation(), 5, unit.team());
-            for (int i = 0; i < ownteam.size(); i++) {
-                if (i == 0) {
-                    lowestHealth = ownteam.get(0).health();
-                }
-                if (ownteam.get(i).health() < lowestHealth) {
-                    lowestHealth = ownteam.get(i).health();
+            long lowestHealthV = 250; // V represents vision range
+            for(int i = 0; i < ownteam.size(); i++) {
+                if(ownteam.get(i).location().mapLocation().isWithinRange(unit.visionRange(), unit.location().mapLocation())) {
+                    if(ownteam.get(i).health() < lowestHealthV) {
+                        lowestHealthV = ownteam.get(i).health();
+                    }
                 }
             }
-            for (int j = 0; j < ownteam.size(); j++) {
-                if (ownteam.get(j).health() == lowestHealth) {
-                    if (ownteam.get(j).location().mapLocation().isWithinRange(unit.attackRange(), unit.location().mapLocation())) {
-                        if (gc.canHeal(unit.id(), ownteam.get(j).id())) {
-                            gc.heal(unit.id(), ownteam.get(j).id());
+            for(int i = 0; i <ownteam.size(); i++) {
+                if(lowestHealthV == ownteam.get(i).health()) {
+                    finder = new Finder(Player.GridEarth[unit.location().mapLocation().getY()][unit.location().mapLocation().getX()],
+                            Player.GridEarth[ownteam.get(i).location().mapLocation().getY()][ownteam.get(i).location().mapLocation().getX()],
+                            Player.GridEarth);
+                    finder.findPath();
+                    if(finder.bPathFound && finder.getPath().size() > 0) {
+                        if(gc.canMove(unit.id(), unit.location().mapLocation().directionTo(finder.getPath().get(0).getLocation()))) {
+                            gc.moveRobot(unit.id(), unit.location().mapLocation().directionTo(finder.getPath().get(0).getLocation()));
+                        }
+                    }
+                }
+            }
+        } catch (Exception e) {
+
+        }
+    }
+
+    public void healing() {
+        try {
+            long lowestHealthA = 250; // maxhealth of knights who are the tankiest robot, A represents attack range
+            for (int i = 0; i < ownteam.size(); i++) {
+                if(ownteam.get(i).location().mapLocation().isWithinRange(unit.attackRange(), unit.location().mapLocation())) {
+                    if(ownteam.get(i).health() < lowestHealthA) {
+                        lowestHealthA = ownteam.get(i).health();
+                    }
+                }
+            }
+            for (int i = 0; i < ownteam.size(); i++) {
+                if (ownteam.get(i).health() == lowestHealthA) {
+                    if (ownteam.get(i).location().mapLocation().isWithinRange(unit.attackRange(), unit.location().mapLocation())) {
+                        if (gc.canHeal(unit.id(), ownteam.get(i).id())) {
+                            gc.heal(unit.id(), ownteam.get(i).id());
                             return;
                         }
                     }
