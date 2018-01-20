@@ -1,49 +1,37 @@
-import bc.MapLocation;
-import bc.Planet;
-import bc.Team;
-import bc.Unit;
+import bc.*;
 
 public class Cell implements Comparable<Cell> {
     private MapLocation location;
     private boolean isPassable;
+    int nH, nG, nF;
     boolean isTarget;
-    private Unit unit;
-    public boolean marked = false, built = false, blueprinted = false;
+    private String value;
+    private int karbonite;
     public int distance;
-    public String value;
 
-    public Cell(int x, int y, boolean isPassable) {
+    public Cell(int x, int y, boolean isPassable, String value) {
         this.location = new MapLocation(Planet.Earth, x, y);
         this.isPassable = isPassable;
         this.isTarget = false;
-        if (this.isPassable) {
-            this.value = "++";
-        } else {
-            this.value = "--";
-        }
+        this.value = value;
+        nH = 0;
+        nG = 0;
+        nF = 0;
     }
 
-    public Unit getUnit() {
-        return unit;
+    public int getKarbonite() {
+        return karbonite;
     }
 
-    public void setUnit(Unit unit, Team myTeam) {
-        this.unit = unit;
-        if (this.unit == null) {
-            this.value = "  ";
-        }
-        if (unit.team() == myTeam) {
-            switch (unit.unitType()) {
-                case Worker:
-                    this.value = "WW";
-                    break;
-                default:
-                    this.value = "OT";
-                    break;
-            }
-        } else {
-            this.value = "EE";
-        }
+    public void setKarbonite(int karbonite) {
+        this.karbonite = karbonite;
+    }
+    public String getValue() {
+        return value;
+    }
+
+    public void setValue(String value) {
+        this.value = value;
     }
 
     public MapLocation getLocation() {
@@ -57,15 +45,6 @@ public class Cell implements Comparable<Cell> {
     public boolean isPassable() {
         return isPassable;
     }
-
-    public void setPassable(boolean passable) {
-        isPassable = passable;
-    }
-
-    public void markSpot() {
-        marked = true;
-    }
-
 
     @Override
     public int compareTo(Cell o) {
