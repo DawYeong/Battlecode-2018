@@ -55,6 +55,7 @@ public class Healer {
                     if(finder.bPathFound && finder.getPath().size() > 0) {
                         if(gc.canMove(unit.id(), unit.location().mapLocation().directionTo(finder.getPath().get(0).getLocation()))) {
                             gc.moveRobot(unit.id(), unit.location().mapLocation().directionTo(finder.getPath().get(0).getLocation()));
+                            return;
                         }
                     }
                 }
